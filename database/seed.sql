@@ -1,19 +1,19 @@
 ﻿USE bharat_finvest_ops;
 
 INSERT INTO users (name, email, password_hash, role, department) VALUES
-('Aarav Sharma', 'admin@bharatfinvest.com', '$2b$10$l911Ak.0vYZq06KwdJgAtelzirPydjHkon8.pYejhYkq6CikDoAnC', 'admin', 'Administration'),
-('Meera Iyer', 'manager@bharatfinvest.com', '$2b$10$tzYC0ZV.PdVSrMNmHU.hXOd9.w1n0CX/UZ7YVzouMQa0AKqYhhuoy', 'manager', 'Operations'),
-('Rohan Verma', 'employee@bharatfinvest.com', '$2b$10$ogRFqkNuUzoHGIyeh0Ofe.MgqAFW28IkZEFStsVvPF1PaXzK3pIEa', 'employee', 'Finance');
+('Akshay Shinde', 'admin@bharatfinvest.com', '$2b$10$l911Ak.0vYZq06KwdJgAtelzirPydjHkon8.pYejhYkq6CikDoAnC', 'admin', 'Administration'),
+('Pravin Shinde', 'manager@bharatfinvest.com', '$2b$10$tzYC0ZV.PdVSrMNmHU.hXOd9.w1n0CX/UZ7YVzouMQa0AKqYhhuoy', 'manager', 'Operations'),
+('Ritesh Bhate', 'employee@bharatfinvest.com', '$2b$10$ogRFqkNuUzoHGIyeh0Ofe.MgqAFW28IkZEFStsVvPF1PaXzK3pIEa', 'employee', 'Finance');
 
 INSERT INTO employees (user_id, employee_code, name, email, phone, department, designation, date_of_joining, status) VALUES
-(3, 'EMP001', 'Rohan Verma', 'employee@bharatfinvest.com', '9876543210', 'Finance', 'Financial Analyst', '2024-02-12', 'active'),
-(NULL, 'EMP002', 'Sneha Kulkarni', 'sneha.kulkarni@bharatfinvest.com', '9876543211', 'Finance', 'Account Executive', '2023-08-03', 'active'),
-(2, 'EMP003', 'Karan Patel', 'karan.patel@bharatfinvest.com', '9876543212', 'Operations', 'Operations Manager', '2022-04-21', 'active'),
-(NULL, 'EMP004', 'Nidhi Joshi', 'nidhi.joshi@bharatfinvest.com', '9876543213', 'Operations', 'Operations Associate', '2025-01-10', 'active'),
-(NULL, 'EMP005', 'Vikram Rao', 'vikram.rao@bharatfinvest.com', '9876543214', 'Compliance', 'Compliance Officer', '2021-11-17', 'active'),
-(NULL, 'EMP006', 'Priya Singh', 'priya.singh@bharatfinvest.com', '9876543215', 'IT', 'Software Engineer', '2023-06-14', 'active'),
-(NULL, 'EMP007', 'Arjun Menon', 'arjun.menon@bharatfinvest.com', '9876543216', 'IT', 'System Administrator', '2020-09-01', 'active'),
-(NULL, 'EMP008', 'Kavya Nair', 'kavya.nair@bharatfinvest.com', '9876543217', 'HR', 'HR Generalist', '2024-05-20', 'active');
+(3, 'EMP001', 'Ritesh Bhate', 'employee@bharatfinvest.com', '9876543210', 'Finance', 'Financial Analyst', '2024-02-12', 'active'),
+(NULL, 'EMP002', 'Niranjan Yadav', 'sneha.kulkarni@bharatfinvest.com', '9876543211', 'Finance', 'Account Executive', '2023-08-03', 'active'),
+(2, 'EMP003', 'Pravin Shinde', 'karan.patel@bharatfinvest.com', '9876543212', 'Operations', 'Operations Manager', '2022-04-21', 'active'),
+(NULL, 'EMP004', 'Shripad Devkar', 'nidhi.joshi@bharatfinvest.com', '9876543213', 'Operations', 'Operations Associate', '2025-01-10', 'active'),
+(NULL, 'EMP005', 'Priyanka Shinde', 'vikram.rao@bharatfinvest.com', '9876543214', 'Compliance', 'Compliance Officer', '2021-11-17', 'active'),
+(NULL, 'EMP006', 'Avanti Waghmare', 'priya.singh@bharatfinvest.com', '9876543215', 'IT', 'Software Engineer', '2023-06-14', 'active'),
+(NULL, 'EMP007', 'Shweta Kulkarni', 'arjun.menon@bharatfinvest.com', '9876543216', 'IT', 'System Administrator', '2020-09-01', 'active'),
+(NULL, 'EMP008', 'Mansi Sonawane', 'kavya.nair@bharatfinvest.com', '9876543217', 'HR', 'HR Generalist', '2024-05-20', 'active');
 
 INSERT INTO tasks (title, description, assigned_to, assigned_by, priority, status, due_date) VALUES
 ('Quarterly Revenue Reconciliation', 'Reconcile Q1 branch-wise revenue entries and verify GL postings.', 1, 1, 'high', 'in_progress', '2026-05-05'),

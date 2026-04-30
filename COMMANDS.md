@@ -199,6 +199,7 @@ start start-project.bat
 - No need to run multiple commands manually
 
 Make sure database is already imported before using this.
+If you update seed data, re-import database to see changes.
 
 ## DevOps Commands
 
