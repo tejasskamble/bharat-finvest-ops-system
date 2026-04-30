@@ -1,6 +1,7 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
+import BrandLogo from '../components/BrandLogo';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -39,9 +40,15 @@ const Login = () => {
           <div className="card shadow border-0" style={{ width: '100%', maxWidth: '460px' }}>
             <div className="card-body p-4 p-md-5">
               <div className="text-center mb-4">
-                <img src="/assets/images/logo.png" alt="BharatFinvest" style={{ height: '60px' }} />
-                <h4 className="mt-3 mb-1">BharatFinvest</h4>
-                <p className="text-muted mb-0">Internal Operations Management Portal</p>
+                <BrandLogo
+                  className="d-inline-block"
+                  align="center"
+                  titleColor="#1a3c5e"
+                  subtitleColor="#1a3c5e"
+                  titleSize="30px"
+                  subtitleSize="13px"
+                />
+                <p className="text-muted mt-2 mb-0">Internal Operations Management Portal</p>
               </div>
 
               {error && <div className="alert alert-danger py-2">{error}</div>}
@@ -121,3 +128,4 @@ const Login = () => {
 };
 
 export default Login;
+

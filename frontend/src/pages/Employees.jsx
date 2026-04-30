@@ -1,6 +1,7 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import Navbar from '../components/Navbar';
+import Avatar from '../components/Avatar';
 
 const defaultForm = {
   user_id: '',
@@ -196,12 +197,7 @@ const Employees = () => {
                     <tr key={employee.id}>
                       <td>
                         <div className="d-flex align-items-center">
-                          <img
-                            src="/assets/images/avatar-default.png"
-                            alt="avatar"
-                            className="rounded-circle me-2"
-                            style={{ width: '32px', height: '32px', objectFit: 'cover' }}
-                          />
+                          <Avatar name={employee.name} size={32} className="me-2" />
                           <div>
                             <div className="fw-semibold">{employee.name}</div>
                             <div className="text-muted" style={{ fontSize: '12px' }}>{employee.email}</div>
@@ -322,3 +318,4 @@ const Employees = () => {
 };
 
 export default Employees;
+

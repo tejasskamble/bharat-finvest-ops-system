@@ -1,5 +1,7 @@
-﻿import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Avatar from './Avatar';
+import BrandLogo from './BrandLogo';
 
 const navItems = [
   { to: '/dashboard', icon: 'bi-grid-1x2', label: 'Dashboard' },
@@ -17,17 +19,8 @@ const Sidebar = () => {
       className="d-flex flex-column position-fixed top-0 start-0 text-white"
       style={{ width: '240px', height: '100vh', backgroundColor: '#1a3c5e' }}
     >
-      <div
-        className="d-flex align-items-center px-3"
-        style={{ height: '64px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
-      >
-        <img src="/assets/images/logo.png" alt="Logo" style={{ height: '32px' }} />
-        <div className="ms-2">
-          <div className="fw-bold text-white" style={{ lineHeight: 1.1 }}>
-            BharatFinvest
-          </div>
-          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.75)' }}>Operations Portal</div>
-        </div>
+      <div className="d-flex align-items-center px-3" style={{ height: '64px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <BrandLogo titleColor="#ffffff" subtitleColor="rgba(255,255,255,0.75)" titleSize="20px" subtitleSize="11px" />
       </div>
 
       <nav className="mt-2 px-2">
@@ -50,12 +43,7 @@ const Sidebar = () => {
 
       <div className="mt-auto p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="d-flex align-items-center mb-2">
-          <img
-            src="/assets/images/avatar-default.png"
-            alt="User"
-            className="rounded-circle"
-            style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-          />
+          <Avatar name={user?.name} size={40} />
           <div className="ms-2">
             <div className="fw-semibold" style={{ fontSize: '13px' }}>
               {user?.name || 'User'}
@@ -74,3 +62,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

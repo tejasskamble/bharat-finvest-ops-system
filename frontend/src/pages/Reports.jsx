@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import axiosInstance from '../api/axiosInstance';
@@ -19,7 +19,6 @@ const Reports = () => {
   const [employees, setEmployees] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [attendanceSummary, setAttendanceSummary] = useState([]);
-  const [logoBase64, setLogoBase64] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
@@ -34,30 +33,26 @@ const Reports = () => {
       setAttendanceSummary(attendanceRes.data.summary || []);
     };
 
-    const loadLogo = async () => {
-      const response = await fetch('/assets/images/logo.png');
-      const blob = await response.blob();
-      const base64 = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-      });
-      setLogoBase64(base64);
-    };
-
     loadData();
-    loadLogo();
   }, []);
 
   const renderHeader = (doc, title) => {
-    if (logoBase64) {
-      doc.addImage(logoBase64, 'PNG', 14, 10, 45, 14);
-    }
-    doc.setFontSize(15);
-    doc.text('BharatFinvest - Operations Report', 14, 30);
+    doc.setTextColor(26, 60, 94);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(17);
+    doc.text('Bharat Finvest', 14, 16);
+
     doc.setFontSize(11);
-    doc.text(title, 14, 38);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 45);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Internal Operations System', 14, 23);
+
+    doc.setTextColor(25, 32, 43);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text(title, 14, 33);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 39);
   };
 
   const employeeRows = useMemo(
@@ -87,7 +82,7 @@ const Reports = () => {
     const doc = new jsPDF();
     renderHeader(doc, 'Employee Directory');
     autoTable(doc, {
-      startY: 52,
+      startY: 46,
       head: [['Code', 'Name', 'Department', 'Designation', 'Status']],
       body: employeeRows
     });
@@ -98,7 +93,7 @@ const Reports = () => {
     const doc = new jsPDF();
     renderHeader(doc, 'Task Tracker Report');
     autoTable(doc, {
-      startY: 52,
+      startY: 46,
       head: [['Title', 'Assignee', 'Priority', 'Status', 'Due Date']],
       body: taskRows
     });
@@ -109,7 +104,7 @@ const Reports = () => {
     const doc = new jsPDF();
     renderHeader(doc, 'Attendance Summary Report');
     autoTable(doc, {
-      startY: 52,
+      startY: 46,
       head: [['Employee', 'Department', 'Present', 'Absent', 'Half Day', 'Attendance %']],
       body: attendanceRows
     });
@@ -196,3 +191,4 @@ const Reports = () => {
 };
 
 export default Reports;
+
