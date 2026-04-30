@@ -6,3 +6,4 @@ dist/
 coverage/
 frontend/public/assets/images/*.jpg
 frontend/public/assets/images/*.png
+backups/*.sql

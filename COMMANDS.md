@@ -199,3 +199,37 @@ start start-project.bat
 - No need to run multiple commands manually
 
 Make sure database is already imported before using this.
+
+## DevOps Commands
+
+### Health Check API
+
+- URL: `http://localhost:5000/api/health`
+
+### Docker Run
+
+```cmd
+docker-compose up --build
+```
+
+### Docker Stop
+
+```cmd
+docker-compose down
+```
+
+### CI (GitHub Actions)
+
+- GitHub Actions runs automatically after push.
+
+### Database Backup
+
+```cmd
+scripts\backup-db.bat
+```
+
+### Database Restore
+
+```cmd
+scripts\restore-db.bat
+```

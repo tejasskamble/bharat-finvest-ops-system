@@ -43,6 +43,15 @@ operations such as employee management, task tracking, attendance, and reporting
 1. `docker-compose up --build`
 2. Open `http://localhost`
 
+## DevOps Features Added
+
+- Dockerized frontend/backend/database
+- MySQL service healthcheck
+- Backend healthcheck API (`/api/health`)
+- GitHub Actions CI pipeline
+- Database backup/restore scripts
+- Environment-based configuration
+
 ## Features
 
 - Secure JWT-based authentication with role-based access
