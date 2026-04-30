@@ -1,20 +1,57 @@
-﻿const pool = require('../config/db');
+const pool = require('../config/db');
+
+const sanitizeEmployeePayload = (body = {}) => ({
+  user_id: body.user_id || null,
+  employee_code: String(body.employee_code || '').trim(),
+  name: String(body.name || '').trim(),
+  email: String(body.email || '').trim(),
+  phone: String(body.phone || '').trim(),
+  department: String(body.department || '').trim(),
+  designation: String(body.designation || '').trim(),
+  date_of_joining: String(body.date_of_joining || '').trim(),
+  status: body.status || 'active'
+});
+
+const validateEmployeePayload = (payload) => {
+  return (
+    payload.employee_code &&
+    payload.name &&
+    payload.email &&
+    payload.phone &&
+    payload.department &&
+    payload.designation &&
+    payload.date_of_joining
+  );
+};
 
 const getEmployees = async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page || '1', 10), 1);
-    const limit = Math.max(parseInt(req.query.limit || '10', 10), 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit || '10', 10), 1), 100);
     const offset = (page - 1) * limit;
+    const search = String(req.query.search || '').trim();
 
-    const [countRows] = await pool.query('SELECT COUNT(*) AS total FROM employees');
+    const filters = [];
+    const filterValues = [];
+
+    if (search) {
+      const like = `%${search}%`;
+      filters.push('(employee_code LIKE ? OR name LIKE ? OR email LIKE ? OR department LIKE ? OR designation LIKE ?)');
+      filterValues.push(like, like, like, like, like);
+    }
+
+    const whereClause = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
+
+    const [countRows] = await pool.query(`SELECT COUNT(*) AS total FROM employees ${whereClause}`, filterValues);
     const total = countRows[0].total;
 
     const [rows] = await pool.query(
       `SELECT id, user_id, employee_code, name, email, phone, department, designation, date_of_joining, status, created_at
        FROM employees
+       ${whereClause}
        ORDER BY id DESC
        LIMIT ? OFFSET ?`,
-      [limit, offset]
+      [...filterValues, limit, offset]
     );
 
     return res.json({
@@ -34,6 +71,9 @@ const getEmployees = async (req, res, next) => {
 const getEmployeeById = async (req, res, next) => {
   try {
     const employeeId = parseInt(req.params.id, 10);
+    if (Number.isNaN(employeeId)) {
+      return res.status(400).json({ message: 'Invalid employee id' });
+    }
 
     const [employeeRows] = await pool.query(
       `SELECT id, user_id, employee_code, name, email, phone, department, designation, date_of_joining, status, created_at
@@ -76,29 +116,34 @@ const getEmployeeById = async (req, res, next) => {
 
 const createEmployee = async (req, res, next) => {
   try {
-    const {
-      user_id,
-      employee_code,
-      name,
-      email,
-      phone,
-      department,
-      designation,
-      date_of_joining,
-      status
-    } = req.body;
+    const payload = sanitizeEmployeePayload(req.body);
 
-    if (!employee_code || !name || !email || !phone || !department || !designation || !date_of_joining) {
+    if (!validateEmployeePayload(payload)) {
       return res.status(400).json({ message: 'Required fields are missing' });
     }
 
     const [result] = await pool.query(
       `INSERT INTO employees (user_id, employee_code, name, email, phone, department, designation, date_of_joining, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user_id || null, employee_code, name, email, phone, department, designation, date_of_joining, status || 'active']
+      [
+        payload.user_id,
+        payload.employee_code,
+        payload.name,
+        payload.email,
+        payload.phone,
+        payload.department,
+        payload.designation,
+        payload.date_of_joining,
+        payload.status
+      ]
     );
 
-    const [rows] = await pool.query('SELECT * FROM employees WHERE id = ?', [result.insertId]);
+    const [rows] = await pool.query(
+      `SELECT id, user_id, employee_code, name, email, phone, department, designation, date_of_joining, status, created_at
+       FROM employees
+       WHERE id = ?`,
+      [result.insertId]
+    );
     return res.status(201).json(rows[0]);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
@@ -111,17 +156,14 @@ const createEmployee = async (req, res, next) => {
 const updateEmployee = async (req, res, next) => {
   try {
     const employeeId = parseInt(req.params.id, 10);
-    const {
-      user_id,
-      employee_code,
-      name,
-      email,
-      phone,
-      department,
-      designation,
-      date_of_joining,
-      status
-    } = req.body;
+    if (Number.isNaN(employeeId)) {
+      return res.status(400).json({ message: 'Invalid employee id' });
+    }
+
+    const payload = sanitizeEmployeePayload(req.body);
+    if (!validateEmployeePayload(payload)) {
+      return res.status(400).json({ message: 'Required fields are missing' });
+    }
 
     const [existing] = await pool.query('SELECT id FROM employees WHERE id = ?', [employeeId]);
     if (existing.length === 0) {
@@ -133,20 +175,25 @@ const updateEmployee = async (req, res, next) => {
        SET user_id = ?, employee_code = ?, name = ?, email = ?, phone = ?, department = ?, designation = ?, date_of_joining = ?, status = ?
        WHERE id = ?`,
       [
-        user_id || null,
-        employee_code,
-        name,
-        email,
-        phone,
-        department,
-        designation,
-        date_of_joining,
-        status || 'active',
+        payload.user_id,
+        payload.employee_code,
+        payload.name,
+        payload.email,
+        payload.phone,
+        payload.department,
+        payload.designation,
+        payload.date_of_joining,
+        payload.status,
         employeeId
       ]
     );
 
-    const [rows] = await pool.query('SELECT * FROM employees WHERE id = ?', [employeeId]);
+    const [rows] = await pool.query(
+      `SELECT id, user_id, employee_code, name, email, phone, department, designation, date_of_joining, status, created_at
+       FROM employees
+       WHERE id = ?`,
+      [employeeId]
+    );
     return res.json(rows[0]);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
@@ -159,6 +206,9 @@ const updateEmployee = async (req, res, next) => {
 const deleteEmployee = async (req, res, next) => {
   try {
     const employeeId = parseInt(req.params.id, 10);
+    if (Number.isNaN(employeeId)) {
+      return res.status(400).json({ message: 'Invalid employee id' });
+    }
 
     const [existing] = await pool.query('SELECT id FROM employees WHERE id = ?', [employeeId]);
     if (existing.length === 0) {

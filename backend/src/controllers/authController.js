@@ -46,8 +46,21 @@ const login = async (req, res, next) => {
   }
 };
 
-const me = async (req, res) => {
-  return res.json({ user: req.user });
+const me = async (req, res, next) => {
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, name, email, role, department FROM users WHERE id = ?',
+      [req.user.id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    return res.json({ user: rows[0] });
+  } catch (error) {
+    return next(error);
+  }
 };
 
 module.exports = {

@@ -6,14 +6,14 @@ INSERT INTO users (name, email, password_hash, role, department) VALUES
 ('Ritesh Bhate', 'employee@bharatfinvest.com', '$2b$10$ogRFqkNuUzoHGIyeh0Ofe.MgqAFW28IkZEFStsVvPF1PaXzK3pIEa', 'employee', 'Finance');
 
 INSERT INTO employees (user_id, employee_code, name, email, phone, department, designation, date_of_joining, status) VALUES
-(3, 'EMP001', 'Ritesh Bhate', 'employee@bharatfinvest.com', '9876543210', 'Finance', 'Financial Analyst', '2024-02-12', 'active'),
-(NULL, 'EMP002', 'Niranjan Yadav', 'sneha.kulkarni@bharatfinvest.com', '9876543211', 'Finance', 'Account Executive', '2023-08-03', 'active'),
-(2, 'EMP003', 'Pravin Shinde', 'karan.patel@bharatfinvest.com', '9876543212', 'Operations', 'Operations Manager', '2022-04-21', 'active'),
-(NULL, 'EMP004', 'Shripad Devkar', 'nidhi.joshi@bharatfinvest.com', '9876543213', 'Operations', 'Operations Associate', '2025-01-10', 'active'),
-(NULL, 'EMP005', 'Priyanka Shinde', 'vikram.rao@bharatfinvest.com', '9876543214', 'Compliance', 'Compliance Officer', '2021-11-17', 'active'),
-(NULL, 'EMP006', 'Avanti Waghmare', 'priya.singh@bharatfinvest.com', '9876543215', 'IT', 'Software Engineer', '2023-06-14', 'active'),
-(NULL, 'EMP007', 'Shweta Kulkarni', 'arjun.menon@bharatfinvest.com', '9876543216', 'IT', 'System Administrator', '2020-09-01', 'active'),
-(NULL, 'EMP008', 'Mansi Sonawane', 'kavya.nair@bharatfinvest.com', '9876543217', 'HR', 'HR Generalist', '2024-05-20', 'active'),
+(3, 'EMP001', 'Ritesh Bhate', 'ritesh.bhate@bharatfinvest.com', '9876543210', 'Finance', 'Financial Analyst', '2024-02-12', 'active'),
+(NULL, 'EMP002', 'Niranjan Yadav', 'niranjan.yadav@bharatfinvest.com', '9876543211', 'Finance', 'Account Executive', '2023-08-03', 'active'),
+(2, 'EMP003', 'Pravin Shinde', 'pravin.shinde@bharatfinvest.com', '9876543212', 'Operations', 'Operations Manager', '2022-04-21', 'active'),
+(NULL, 'EMP004', 'Shripad Devkar', 'shripad.devkar@bharatfinvest.com', '9876543213', 'Operations', 'Operations Associate', '2025-01-10', 'active'),
+(NULL, 'EMP005', 'Priyanka Shinde', 'priyanka.shinde@bharatfinvest.com', '9876543214', 'Compliance', 'Compliance Officer', '2021-11-17', 'active'),
+(NULL, 'EMP006', 'Avanti Waghmare', 'avanti.waghmare@bharatfinvest.com', '9876543215', 'IT', 'Software Engineer', '2023-06-14', 'active'),
+(NULL, 'EMP007', 'Shweta Kulkarni', 'shweta.kulkarni@bharatfinvest.com', '9876543216', 'IT', 'System Administrator', '2020-09-01', 'active'),
+(NULL, 'EMP008', 'Mansi Sonawane', 'mansi.sonawane@bharatfinvest.com', '9876543217', 'HR', 'HR Generalist', '2024-05-20', 'active'),
 (NULL, 'INT001', 'Kshitij Dhaware', 'kshitij.dhaware@bharatfinvest.com', '9876543218', 'Finance', 'Finance Intern (MCom)', '2026-04-15', 'active'),
 (NULL, 'INT002', 'Yash Meshram', 'yash.meshram@bharatfinvest.com', '9876543219', 'Operations', 'Operations Intern (MCom)', '2026-04-16', 'active'),
 (NULL, 'INT003', 'Aarya Kale', 'aarya.kale@bharatfinvest.com', '9876543220', 'HR', 'HR Intern (MBA HR)', '2026-04-17', 'active'),

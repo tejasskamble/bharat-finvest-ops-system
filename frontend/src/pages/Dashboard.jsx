@@ -18,12 +18,16 @@ ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Le
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const loadStats = async () => {
       try {
         const { data } = await axiosInstance.get('/dashboard/stats');
         setStats(data);
+        setError('');
+      } catch (requestError) {
+        setError(requestError.response?.data?.message || 'Unable to load dashboard data right now.');
       } finally {
         setLoading(false);
       }
@@ -76,10 +80,22 @@ const Dashboard = () => {
     );
   }
 
+  if (!stats) {
+    return (
+      <>
+        <Navbar title="Dashboard" />
+        <div className="p-4">
+          <div className="alert alert-danger mb-0">{error || 'Dashboard data is unavailable.'}</div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar title="Dashboard" />
       <div className="p-4">
+        {error ? <div className="alert alert-warning">{error}</div> : null}
         <div
           className="rounded mb-4 p-4 text-white"
           style={{

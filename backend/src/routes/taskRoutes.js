@@ -18,7 +18,7 @@ router.get('/', getTasks);
 router.get('/stats', getTaskStats);
 router.get('/:id', getTaskById);
 router.post('/', allowRoles('admin', 'manager'), createTask);
-router.put('/:id', updateTask);
+router.put('/:id', allowRoles('admin', 'manager'), updateTask);
 router.delete('/:id', allowRoles('admin'), deleteTask);
 
 module.exports = router;

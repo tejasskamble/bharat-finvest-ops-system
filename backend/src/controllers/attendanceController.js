@@ -1,4 +1,16 @@
-﻿const pool = require('../config/db');
+const pool = require('../config/db');
+
+const sanitizeAttendancePayload = (body = {}) => ({
+  employee_id: Number(body.employee_id),
+  date: String(body.date || '').trim(),
+  check_in: body.check_in || null,
+  check_out: body.check_out || null,
+  status: body.status || 'present'
+});
+
+const validateAttendancePayload = (payload) => {
+  return Number.isInteger(payload.employee_id) && payload.employee_id > 0 && payload.date;
+};
 
 const getAttendance = async (req, res, next) => {
   try {
@@ -7,8 +19,12 @@ const getAttendance = async (req, res, next) => {
     const values = [];
 
     if (employee_id) {
+      const employeeIdNumber = Number(employee_id);
+      if (!Number.isInteger(employeeIdNumber) || employeeIdNumber <= 0) {
+        return res.status(400).json({ message: 'employee_id must be a valid number' });
+      }
       conditions.push('a.employee_id = ?');
-      values.push(employee_id);
+      values.push(employeeIdNumber);
     }
     if (from) {
       conditions.push('a.date >= ?');
@@ -38,23 +54,32 @@ const getAttendance = async (req, res, next) => {
 
 const markAttendance = async (req, res, next) => {
   try {
-    const { employee_id, date, check_in, check_out, status } = req.body;
+    const payload = sanitizeAttendancePayload(req.body);
 
-    if (!employee_id || !date) {
+    if (!validateAttendancePayload(payload)) {
       return res.status(400).json({ message: 'employee_id and date are required' });
     }
 
     const [result] = await pool.query(
       `INSERT INTO attendance (employee_id, date, check_in, check_out, status)
        VALUES (?, ?, ?, ?, ?)`,
-      [employee_id, date, check_in || null, check_out || null, status || 'present']
+      [payload.employee_id, payload.date, payload.check_in, payload.check_out, payload.status]
     );
 
-    const [rows] = await pool.query('SELECT * FROM attendance WHERE id = ?', [result.insertId]);
+    const [rows] = await pool.query(
+      `SELECT a.*, e.name AS employee_name, e.employee_code, e.department
+       FROM attendance a
+       INNER JOIN employees e ON e.id = a.employee_id
+       WHERE a.id = ?`,
+      [result.insertId]
+    );
     return res.status(201).json(rows[0]);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ message: 'Attendance already marked for this employee on this date' });
+    }
+    if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(422).json({ message: 'Employee does not exist' });
     }
     return next(error);
   }
@@ -63,7 +88,14 @@ const markAttendance = async (req, res, next) => {
 const updateAttendance = async (req, res, next) => {
   try {
     const attendanceId = parseInt(req.params.id, 10);
-    const { employee_id, date, check_in, check_out, status } = req.body;
+    if (Number.isNaN(attendanceId)) {
+      return res.status(400).json({ message: 'Invalid attendance id' });
+    }
+
+    const payload = sanitizeAttendancePayload(req.body);
+    if (!validateAttendancePayload(payload)) {
+      return res.status(400).json({ message: 'employee_id and date are required' });
+    }
 
     const [existing] = await pool.query('SELECT id FROM attendance WHERE id = ?', [attendanceId]);
     if (existing.length === 0) {
@@ -74,14 +106,23 @@ const updateAttendance = async (req, res, next) => {
       `UPDATE attendance
        SET employee_id = ?, date = ?, check_in = ?, check_out = ?, status = ?
        WHERE id = ?`,
-      [employee_id, date, check_in || null, check_out || null, status || 'present', attendanceId]
+      [payload.employee_id, payload.date, payload.check_in, payload.check_out, payload.status, attendanceId]
     );
 
-    const [rows] = await pool.query('SELECT * FROM attendance WHERE id = ?', [attendanceId]);
+    const [rows] = await pool.query(
+      `SELECT a.*, e.name AS employee_name, e.employee_code, e.department
+       FROM attendance a
+       INNER JOIN employees e ON e.id = a.employee_id
+       WHERE a.id = ?`,
+      [attendanceId]
+    );
     return res.json(rows[0]);
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ message: 'Attendance already exists for this employee on this date' });
+    }
+    if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(422).json({ message: 'Employee does not exist' });
     }
     return next(error);
   }

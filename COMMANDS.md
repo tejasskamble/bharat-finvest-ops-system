@@ -234,3 +234,14 @@ scripts\backup-db.bat
 ```cmd
 scripts\restore-db.bat
 ```
+
+## Final QA Checklist
+
+- Login tested
+- Dashboard tested
+- Employee CRUD tested
+- Task CRUD tested
+- Attendance tested
+- Reports PDF tested
+- Logout tested
+- Health API tested

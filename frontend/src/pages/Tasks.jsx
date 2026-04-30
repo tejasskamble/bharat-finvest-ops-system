@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -29,15 +29,29 @@ const Tasks = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('');
   const [formData, setFormData] = useState(initialTask);
   const [isEdit, setIsEdit] = useState(false);
   const [currentId, setCurrentId] = useState(null);
+  const [banner, setBanner] = useState(null);
+  const [modalError, setModalError] = useState('');
+
+  const canManageTasks = user?.role === 'admin' || user?.role === 'manager';
+  const canDeleteTasks = user?.role === 'admin';
 
   const loadEmployees = async () => {
-    const { data } = await axiosInstance.get('/employees?page=1&limit=200');
-    setEmployees(data.data.filter((employee) => employee.status === 'active'));
+    try {
+      const { data } = await axiosInstance.get('/employees?page=1&limit=200');
+      setEmployees((data.data || []).filter((employee) => employee.status === 'active'));
+    } catch (requestError) {
+      setBanner({
+        type: 'danger',
+        text: requestError.response?.data?.message || 'Failed to load employee dropdown.'
+      });
+      setEmployees([]);
+    }
   };
 
   const loadTasks = async () => {
@@ -52,7 +66,14 @@ const Tasks = () => {
       }
       const query = params.toString();
       const { data } = await axiosInstance.get(`/tasks${query ? `?${query}` : ''}`);
-      setTasks(data);
+      setTasks(data || []);
+      setBanner(null);
+    } catch (requestError) {
+      setBanner({
+        type: 'danger',
+        text: requestError.response?.data?.message || 'Failed to load tasks.'
+      });
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -66,17 +87,33 @@ const Tasks = () => {
     loadTasks();
   }, [statusFilter, priorityFilter]);
 
-  const openAddModal = () => {
-    setIsEdit(false);
-    setCurrentId(null);
-    setFormData(initialTask);
+  const openTaskModal = () => {
     const modal = new window.bootstrap.Modal(document.getElementById('taskModal'));
     modal.show();
   };
 
+  const openAddModal = () => {
+    if (!canManageTasks) {
+      setBanner({ type: 'warning', text: 'Only admin or manager can create tasks.' });
+      return;
+    }
+
+    setIsEdit(false);
+    setCurrentId(null);
+    setModalError('');
+    setFormData(initialTask);
+    openTaskModal();
+  };
+
   const openEditModal = (task) => {
+    if (!canManageTasks) {
+      setBanner({ type: 'warning', text: 'Only admin or manager can edit tasks.' });
+      return;
+    }
+
     setIsEdit(true);
     setCurrentId(task.id);
+    setModalError('');
     setFormData({
       title: task.title,
       description: task.description || '',
@@ -85,8 +122,7 @@ const Tasks = () => {
       status: task.status,
       due_date: formatDateValue(task.due_date)
     });
-    const modal = new window.bootstrap.Modal(document.getElementById('taskModal'));
-    modal.show();
+    openTaskModal();
   };
 
   const closeModal = () => {
@@ -95,6 +131,10 @@ const Tasks = () => {
     if (modal) {
       modal.hide();
     }
+
+    const form = modalElement?.querySelector('form');
+    form?.classList.remove('was-validated');
+    setModalError('');
   };
 
   const handleSave = async (event) => {
@@ -108,6 +148,7 @@ const Tasks = () => {
     }
 
     setSaving(true);
+    setModalError('');
     try {
       const payload = {
         ...formData,
@@ -117,20 +158,45 @@ const Tasks = () => {
 
       if (isEdit) {
         await axiosInstance.put(`/tasks/${currentId}`, payload);
+        setBanner({ type: 'success', text: 'Task updated successfully.' });
       } else {
         await axiosInstance.post('/tasks', payload);
+        setBanner({ type: 'success', text: 'Task created successfully.' });
       }
 
       closeModal();
       await loadTasks();
+    } catch (requestError) {
+      setModalError(requestError.response?.data?.message || 'Failed to save task.');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (taskId) => {
-    await axiosInstance.delete(`/tasks/${taskId}`);
-    await loadTasks();
+  const handleDelete = async (task) => {
+    if (!canDeleteTasks) {
+      setBanner({ type: 'warning', text: 'Only admin can delete tasks.' });
+      return;
+    }
+
+    const confirmed = window.confirm(`Delete task "${task.title}"? This action cannot be undone.`);
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingId(task.id);
+    try {
+      await axiosInstance.delete(`/tasks/${task.id}`);
+      setBanner({ type: 'success', text: 'Task deleted successfully.' });
+      await loadTasks();
+    } catch (requestError) {
+      setBanner({
+        type: 'danger',
+        text: requestError.response?.data?.message || 'Failed to delete task.'
+      });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
@@ -139,23 +205,40 @@ const Tasks = () => {
     <>
       <Navbar title="Tasks" />
       <div className="p-4">
+        {banner ? (
+          <div className={`alert alert-${banner.type} alert-dismissible fade show`} role="alert">
+            {banner.text}
+            <button type="button" className="btn-close" onClick={() => setBanner(null)} aria-label="Close"></button>
+          </div>
+        ) : null}
+
         <div className="card border-0 shadow-sm">
           <div className="card-header bg-white d-flex flex-wrap gap-2 justify-content-between align-items-center">
             <div className="d-flex flex-wrap gap-2">
-              <select className="form-select" style={{ width: '180px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <select
+                className="form-select"
+                style={{ width: '180px' }}
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
                 <option value="">All Statuses</option>
                 <option value="pending">Pending</option>
                 <option value="in_progress">In Progress</option>
                 <option value="completed">Completed</option>
               </select>
-              <select className="form-select" style={{ width: '180px' }} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+              <select
+                className="form-select"
+                style={{ width: '180px' }}
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+              >
                 <option value="">All Priorities</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
               </select>
             </div>
-            <button type="button" className="btn btn-primary" onClick={openAddModal}>
+            <button type="button" className="btn btn-primary" onClick={openAddModal} disabled={!canManageTasks}>
               <i className="bi bi-plus-circle me-1"></i> Add Task
             </button>
           </div>
@@ -175,11 +258,15 @@ const Tasks = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-4"><div className="spinner-border spinner-border-sm"></div></td>
+                    <td colSpan="6" className="text-center py-4">
+                      <div className="spinner-border spinner-border-sm"></div>
+                    </td>
                   </tr>
                 ) : tasks.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-4 text-muted">No tasks found</td>
+                    <td colSpan="6" className="text-center py-4 text-muted">
+                      No tasks found
+                    </td>
                   </tr>
                 ) : (
                   tasks.map((task) => {
@@ -189,16 +276,41 @@ const Tasks = () => {
                       <tr key={task.id} className={isOverdue ? 'table-danger' : ''}>
                         <td>
                           <div className="fw-semibold">{task.title}</div>
-                          <div className="text-muted" style={{ fontSize: '12px' }}>{task.description}</div>
+                          <div className="text-muted" style={{ fontSize: '12px' }}>
+                            {task.description || '-'}
+                          </div>
                         </td>
                         <td>{task.assignee_name}</td>
-                        <td><span className={`badge text-bg-${task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'secondary'}`}>{task.priority}</span></td>
-                        <td><span className="badge text-bg-info text-dark">{task.status}</span></td>
+                        <td>
+                          <span
+                            className={`badge text-bg-${
+                              task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'secondary'
+                            }`}
+                          >
+                            {task.priority}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`badge ${task.status === 'completed' ? 'text-bg-success' : 'text-bg-info text-dark'}`}>
+                            {task.status}
+                          </span>
+                        </td>
                         <td>{taskDate}</td>
                         <td className="text-end">
-                          <button type="button" className="btn btn-sm btn-outline-primary me-2" onClick={() => openEditModal(task)}>Edit</button>
-                          {user.role === 'admin' ? (
-                            <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(task.id)}>Delete</button>
+                          {canManageTasks ? (
+                            <button type="button" className="btn btn-sm btn-outline-primary me-2" onClick={() => openEditModal(task)}>
+                              Edit
+                            </button>
+                          ) : null}
+                          {canDeleteTasks ? (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDelete(task)}
+                              disabled={deletingId === task.id}
+                            >
+                              {deletingId === task.id ? <span className="spinner-border spinner-border-sm"></span> : 'Delete'}
+                            </button>
                           ) : null}
                         </td>
                       </tr>
@@ -217,34 +329,62 @@ const Tasks = () => {
             <form className="needs-validation" onSubmit={handleSave} noValidate>
               <div className="modal-header">
                 <h5 className="modal-title">{isEdit ? 'Edit Task' : 'Add Task'}</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" disabled={saving}></button>
               </div>
               <div className="modal-body">
+                {modalError ? <div className="alert alert-danger py-2">{modalError}</div> : null}
                 <div className="mb-2">
                   <label className="form-label">Title</label>
-                  <input className="form-control" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+                  <input
+                    className="form-control"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  />
                 </div>
                 <div className="mb-2">
                   <label className="form-label">Description</label>
-                  <textarea className="form-control" rows="3" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}></textarea>
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  ></textarea>
                 </div>
                 <div className="row g-2">
                   <div className="col-md-6">
                     <label className="form-label">Assignee</label>
-                    <select className="form-select" required value={formData.assigned_to} onChange={(e) => setFormData({ ...formData, assigned_to: e.target.value })}>
+                    <select
+                      className="form-select"
+                      required
+                      value={formData.assigned_to}
+                      onChange={(e) => setFormData({ ...formData, assigned_to: e.target.value })}
+                    >
                       <option value="">Select employee</option>
                       {employees.map((employee) => (
-                        <option key={employee.id} value={employee.id}>{employee.name}</option>
+                        <option key={employee.id} value={employee.id}>
+                          {employee.name}
+                        </option>
                       ))}
                     </select>
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Due Date</label>
-                    <input type="date" className="form-control" required value={formData.due_date} onChange={(e) => setFormData({ ...formData, due_date: e.target.value })} />
+                    <input
+                      type="date"
+                      className="form-control"
+                      required
+                      value={formData.due_date}
+                      onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                    />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Priority</label>
-                    <select className="form-select" value={formData.priority} onChange={(e) => setFormData({ ...formData, priority: e.target.value })}>
+                    <select
+                      className="form-select"
+                      value={formData.priority}
+                      onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                    >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
                       <option value="high">High</option>
@@ -252,7 +392,11 @@ const Tasks = () => {
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Status</label>
-                    <select className="form-select" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+                    <select
+                      className="form-select"
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    >
                       <option value="pending">Pending</option>
                       <option value="in_progress">In Progress</option>
                       <option value="completed">Completed</option>
@@ -261,7 +405,9 @@ const Tasks = () => {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" className="btn btn-outline-secondary" onClick={closeModal} disabled={saving}>
+                  Cancel
+                </button>
                 <button type="submit" className="btn btn-primary" disabled={saving}>
                   {saving ? <span className="spinner-border spinner-border-sm me-1"></span> : null}
                   {isEdit ? 'Update' : 'Create'}

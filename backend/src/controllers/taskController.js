@@ -1,4 +1,25 @@
-﻿const pool = require('../config/db');
+const pool = require('../config/db');
+
+const sanitizeTaskPayload = (body = {}) => ({
+  title: String(body.title || '').trim(),
+  description: String(body.description || '').trim(),
+  assigned_to: Number(body.assigned_to),
+  assigned_by: Number(body.assigned_by),
+  priority: body.priority || 'medium',
+  status: body.status || 'pending',
+  due_date: String(body.due_date || '').trim()
+});
+
+const isValidTaskPayload = (payload) => {
+  return (
+    payload.title &&
+    Number.isInteger(payload.assigned_to) &&
+    payload.assigned_to > 0 &&
+    Number.isInteger(payload.assigned_by) &&
+    payload.assigned_by > 0 &&
+    payload.due_date
+  );
+};
 
 const getTasks = async (req, res, next) => {
   try {
@@ -62,6 +83,10 @@ const getTaskStats = async (req, res, next) => {
 const getTaskById = async (req, res, next) => {
   try {
     const taskId = parseInt(req.params.id, 10);
+    if (Number.isNaN(taskId)) {
+      return res.status(400).json({ message: 'Invalid task id' });
+    }
+
     const [rows] = await pool.query(
       `SELECT t.*, e.name AS assignee_name, u.name AS assigner_name
        FROM tasks t
@@ -83,21 +108,39 @@ const getTaskById = async (req, res, next) => {
 
 const createTask = async (req, res, next) => {
   try {
-    const { title, description, assigned_to, assigned_by, priority, status, due_date } = req.body;
+    const payload = sanitizeTaskPayload(req.body);
 
-    if (!title || !assigned_to || !assigned_by || !due_date) {
-      return res.status(400).json({ message: 'Required fields are missing' });
+    if (!isValidTaskPayload(payload)) {
+      return res.status(400).json({ message: 'Required fields are missing or invalid' });
     }
 
     const [result] = await pool.query(
       `INSERT INTO tasks (title, description, assigned_to, assigned_by, priority, status, due_date)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [title, description || '', assigned_to, assigned_by, priority || 'medium', status || 'pending', due_date]
+      [
+        payload.title,
+        payload.description,
+        payload.assigned_to,
+        payload.assigned_by,
+        payload.priority,
+        payload.status,
+        payload.due_date
+      ]
     );
 
-    const [rows] = await pool.query('SELECT * FROM tasks WHERE id = ?', [result.insertId]);
+    const [rows] = await pool.query(
+      `SELECT t.*, e.name AS assignee_name, u.name AS assigner_name
+       FROM tasks t
+       INNER JOIN employees e ON e.id = t.assigned_to
+       INNER JOIN users u ON u.id = t.assigned_by
+       WHERE t.id = ?`,
+      [result.insertId]
+    );
     return res.status(201).json(rows[0]);
   } catch (error) {
+    if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(422).json({ message: 'Assigned employee or assigner user does not exist' });
+    }
     return next(error);
   }
 };
@@ -105,7 +148,14 @@ const createTask = async (req, res, next) => {
 const updateTask = async (req, res, next) => {
   try {
     const taskId = parseInt(req.params.id, 10);
-    const { title, description, assigned_to, assigned_by, priority, status, due_date } = req.body;
+    if (Number.isNaN(taskId)) {
+      return res.status(400).json({ message: 'Invalid task id' });
+    }
+
+    const payload = sanitizeTaskPayload(req.body);
+    if (!isValidTaskPayload(payload)) {
+      return res.status(400).json({ message: 'Required fields are missing or invalid' });
+    }
 
     const [existing] = await pool.query('SELECT id FROM tasks WHERE id = ?', [taskId]);
     if (existing.length === 0) {
@@ -116,12 +166,31 @@ const updateTask = async (req, res, next) => {
       `UPDATE tasks
        SET title = ?, description = ?, assigned_to = ?, assigned_by = ?, priority = ?, status = ?, due_date = ?
        WHERE id = ?`,
-      [title, description || '', assigned_to, assigned_by, priority, status, due_date, taskId]
+      [
+        payload.title,
+        payload.description,
+        payload.assigned_to,
+        payload.assigned_by,
+        payload.priority,
+        payload.status,
+        payload.due_date,
+        taskId
+      ]
     );
 
-    const [rows] = await pool.query('SELECT * FROM tasks WHERE id = ?', [taskId]);
+    const [rows] = await pool.query(
+      `SELECT t.*, e.name AS assignee_name, u.name AS assigner_name
+       FROM tasks t
+       INNER JOIN employees e ON e.id = t.assigned_to
+       INNER JOIN users u ON u.id = t.assigned_by
+       WHERE t.id = ?`,
+      [taskId]
+    );
     return res.json(rows[0]);
   } catch (error) {
+    if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(422).json({ message: 'Assigned employee or assigner user does not exist' });
+    }
     return next(error);
   }
 };
@@ -129,6 +198,10 @@ const updateTask = async (req, res, next) => {
 const deleteTask = async (req, res, next) => {
   try {
     const taskId = parseInt(req.params.id, 10);
+    if (Number.isNaN(taskId)) {
+      return res.status(400).json({ message: 'Invalid task id' });
+    }
+
     const [existing] = await pool.query('SELECT id FROM tasks WHERE id = ?', [taskId]);
 
     if (existing.length === 0) {

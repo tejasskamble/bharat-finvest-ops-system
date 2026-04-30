@@ -6,25 +6,33 @@ import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const [email, setEmail] = useState('admin@bharatfinvest.com');
   const [password, setPassword] = useState('Admin@123');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  if (isAuthenticated) {
+  if (!isLoading && isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const form = event.currentTarget;
+    if (!form.checkValidity()) {
+      form.classList.add('was-validated');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
       const { data } = await axiosInstance.post('/auth/login', { email, password });
       login(data.token, data.user);
+      form.classList.remove('was-validated');
       navigate('/dashboard');
     } catch (requestError) {
       setError(requestError.response?.data?.message || 'Login failed. Please check your credentials.');
@@ -128,4 +136,3 @@ const Login = () => {
 };
 
 export default Login;
-
