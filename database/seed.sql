@@ -13,7 +13,11 @@ INSERT INTO employees (user_id, employee_code, name, email, phone, department, d
 (NULL, 'EMP005', 'Priyanka Shinde', 'vikram.rao@bharatfinvest.com', '9876543214', 'Compliance', 'Compliance Officer', '2021-11-17', 'active'),
 (NULL, 'EMP006', 'Avanti Waghmare', 'priya.singh@bharatfinvest.com', '9876543215', 'IT', 'Software Engineer', '2023-06-14', 'active'),
 (NULL, 'EMP007', 'Shweta Kulkarni', 'arjun.menon@bharatfinvest.com', '9876543216', 'IT', 'System Administrator', '2020-09-01', 'active'),
-(NULL, 'EMP008', 'Mansi Sonawane', 'kavya.nair@bharatfinvest.com', '9876543217', 'HR', 'HR Generalist', '2024-05-20', 'active');
+(NULL, 'EMP008', 'Mansi Sonawane', 'kavya.nair@bharatfinvest.com', '9876543217', 'HR', 'HR Generalist', '2024-05-20', 'active'),
+(NULL, 'INT001', 'Kshitij Dhaware', 'kshitij.dhaware@bharatfinvest.com', '9876543218', 'Finance', 'Finance Intern (MCom)', '2026-04-15', 'active'),
+(NULL, 'INT002', 'Yash Meshram', 'yash.meshram@bharatfinvest.com', '9876543219', 'Operations', 'Operations Intern (MCom)', '2026-04-16', 'active'),
+(NULL, 'INT003', 'Aarya Kale', 'aarya.kale@bharatfinvest.com', '9876543220', 'HR', 'HR Intern (MBA HR)', '2026-04-17', 'active'),
+(NULL, 'INT004', 'Disha Jadhav', 'disha.jadhav@bharatfinvest.com', '9876543221', 'IT', 'IT Intern (MSc Computer Science)', '2026-04-18', 'active');
 
 INSERT INTO tasks (title, description, assigned_to, assigned_by, priority, status, due_date) VALUES
 ('Quarterly Revenue Reconciliation', 'Reconcile Q1 branch-wise revenue entries and verify GL postings.', 1, 1, 'high', 'in_progress', '2026-05-05'),
@@ -25,7 +29,15 @@ INSERT INTO tasks (title, description, assigned_to, assigned_by, priority, statu
 ('Vendor KYC Backlog Cleanup', 'Complete KYC validation for pending vendor profiles.', 3, 2, 'medium', 'completed', '2026-04-25'),
 ('Treasury Settlement Tracking', 'Track delayed treasury settlements and escalate exceptions.', 1, 2, 'high', 'in_progress', '2026-05-01'),
 ('Policy Acknowledgement Campaign', 'Collect employee acknowledgement for revised policy.', 4, 2, 'low', 'pending', '2026-05-15'),
-('Internal Systems Patch Verification', 'Validate post-patch behavior on ops dashboard modules.', 6, 1, 'medium', 'completed', '2026-04-28');
+('Internal Systems Patch Verification', 'Validate post-patch behavior on ops dashboard modules.', 6, 1, 'medium', 'completed', '2026-04-28'),
+('Expense Register Cleanup - Intern', 'Review petty cash vouchers and reconcile missing narration entries.', 9, 2, 'medium', 'pending', '2026-05-06'),
+('Vendor Ledger Tagging', 'Tag FY26 vendor ledger entries department-wise for faster monthly closing.', 9, 2, 'medium', 'in_progress', '2026-05-09'),
+('SOP Checklist Compilation', 'Compile and format branch operations SOP checklist in shared template.', 10, 2, 'medium', 'pending', '2026-05-07'),
+('Daily Ops Tracker Update', 'Maintain delayed-case tracker and highlight escalation-ready items.', 10, 2, 'high', 'in_progress', '2026-05-08'),
+('Employee File Audit Support', 'Cross-check HR employee files for pending KYC and policy acknowledgements.', 11, 2, 'medium', 'pending', '2026-05-10'),
+('Onboarding Document Indexing', 'Prepare indexed onboarding folder list for April and May hiring batch.', 11, 2, 'low', 'in_progress', '2026-05-11'),
+('Access Rights Review Support', 'Assist IT team in reviewing role-based access requests for new joiners.', 12, 2, 'high', 'in_progress', '2026-05-05'),
+('System Asset Sheet Validation', 'Validate laptop and device allocation sheet against helpdesk records.', 12, 2, 'medium', 'pending', '2026-05-12');
 
 INSERT INTO attendance (employee_id, date, check_in, check_out, status) VALUES
 (1, '2026-04-01', '09:15:00', '18:00:00', 'present'),
@@ -267,4 +279,36 @@ INSERT INTO attendance (employee_id, date, check_in, check_out, status) VALUES
 (8, '2026-04-27', '09:15:00', '18:00:00', 'present'),
 (8, '2026-04-28', '09:30:00', '14:00:00', 'half_day'),
 (8, '2026-04-29', '09:15:00', '18:00:00', 'present'),
-(8, '2026-04-30', '09:15:00', '18:00:00', 'present');
+(8, '2026-04-30', '09:15:00', '18:00:00', 'present'),
+(9, '2026-04-23', '09:20:00', '17:45:00', 'present'),
+(9, '2026-04-24', '09:15:00', '18:00:00', 'present'),
+(9, '2026-04-25', '09:25:00', '17:50:00', 'present'),
+(9, '2026-04-26', '09:30:00', '14:15:00', 'half_day'),
+(9, '2026-04-27', '09:10:00', '18:05:00', 'present'),
+(9, '2026-04-28', '09:15:00', '18:00:00', 'present'),
+(9, '2026-04-29', '09:18:00', '18:02:00', 'present'),
+(9, '2026-04-30', '09:12:00', '17:58:00', 'present'),
+(10, '2026-04-23', '09:22:00', '17:48:00', 'present'),
+(10, '2026-04-24', '09:17:00', '18:03:00', 'present'),
+(10, '2026-04-25', '09:20:00', '17:55:00', 'present'),
+(10, '2026-04-26', '09:28:00', '14:12:00', 'half_day'),
+(10, '2026-04-27', '09:14:00', '18:01:00', 'present'),
+(10, '2026-04-28', '09:16:00', '17:59:00', 'present'),
+(10, '2026-04-29', '09:19:00', '18:04:00', 'present'),
+(10, '2026-04-30', '09:13:00', '18:00:00', 'present'),
+(11, '2026-04-23', '09:18:00', '17:52:00', 'present'),
+(11, '2026-04-24', '09:14:00', '18:00:00', 'present'),
+(11, '2026-04-25', '09:21:00', '17:57:00', 'present'),
+(11, '2026-04-26', '09:31:00', '14:10:00', 'half_day'),
+(11, '2026-04-27', '09:12:00', '18:02:00', 'present'),
+(11, '2026-04-28', '09:15:00', '18:01:00', 'present'),
+(11, '2026-04-29', '09:17:00', '17:56:00', 'present'),
+(11, '2026-04-30', '09:11:00', '18:03:00', 'present'),
+(12, '2026-04-23', '09:16:00', '17:50:00', 'present'),
+(12, '2026-04-24', '09:13:00', '18:05:00', 'present'),
+(12, '2026-04-25', '09:24:00', '17:58:00', 'present'),
+(12, '2026-04-26', '09:29:00', '14:18:00', 'half_day'),
+(12, '2026-04-27', '09:15:00', '18:00:00', 'present'),
+(12, '2026-04-28', '09:17:00', '18:02:00', 'present'),
+(12, '2026-04-29', '09:20:00', '17:55:00', 'present'),
+(12, '2026-04-30', '09:14:00', '18:04:00', 'present');
