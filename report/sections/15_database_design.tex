@@ -1,0 +1,56 @@
+\chapter{Database Design}
+
+The database schema is defined in \texttt{database/schema.sql} and seeded through \texttt{database/seed.sql}.
+
+\section{Tables}
+\subsection*{1. users}
+Stores authenticated application users.
+\begin{itemize}[leftmargin=1.3cm]
+\item Primary Key: \texttt{id}
+\item Key fields: \texttt{name}, \texttt{email} (unique), \texttt{password\_hash}, \texttt{role}, \texttt{department}
+\item Role values: \texttt{admin}, \texttt{manager}, \texttt{employee}
+\end{itemize}
+
+\subsection*{2. employees}
+Stores employee and intern profile records.
+\begin{itemize}[leftmargin=1.3cm]
+\item Primary Key: \texttt{id}
+\item Foreign Key: \texttt{user\_id} references \texttt{users(id)}
+\item Unique field: \texttt{employee\_code}
+\item Key fields: \texttt{name}, \texttt{email}, \texttt{phone}, \texttt{department}, \texttt{designation}, \texttt{date\_of\_joining}, \texttt{status}
+\item Status values: \texttt{active}, \texttt{inactive}
+\end{itemize}
+
+\subsection*{3. tasks}
+Stores tasks assigned to employees.
+\begin{itemize}[leftmargin=1.3cm]
+\item Primary Key: \texttt{id}
+\item Foreign Keys: \texttt{assigned\_to} references \texttt{employees(id)}, \texttt{assigned\_by} references \texttt{users(id)}
+\item Key fields: \texttt{title}, \texttt{description}, \texttt{priority}, \texttt{status}, \texttt{due\_date}
+\item Priority values: \texttt{low}, \texttt{medium}, \texttt{high}
+\item Status values: \texttt{pending}, \texttt{in\_progress}, \texttt{completed}
+\end{itemize}
+
+\subsection*{4. attendance}
+Stores attendance logs per employee and date.
+\begin{itemize}[leftmargin=1.3cm]
+\item Primary Key: \texttt{id}
+\item Foreign Key: \texttt{employee\_id} references \texttt{employees(id)}
+\item Unique composite key: \texttt{(employee\_id, date)}
+\item Status values: \texttt{present}, \texttt{absent}, \texttt{half\_day}, \texttt{leave}
+\end{itemize}
+
+\section{Relationship Notes}
+\begin{itemize}[leftmargin=1.3cm]
+\item One user may be linked to zero or one employee profile (\texttt{users} to \texttt{employees}).
+\item One employee can have many tasks and many attendance records.
+\item One admin/manager user can assign many tasks.
+\item Cascade operations are handled carefully in APIs to avoid accidental data deletion in demo scenarios.
+\end{itemize}
+
+\section{Seed Data Highlights}
+\begin{itemize}[leftmargin=1.3cm]
+\item Demo users: Admin (Akshay Shinde), Manager (Pravin Shinde), Employee (Ritesh Bhate).
+\item Employee table includes 8 regular employees and 4 interns (total 12 records).
+\item Seed includes realistic tasks and attendance records for reporting and dashboard visualization.
+\end{itemize}

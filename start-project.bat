@@ -33,7 +33,23 @@ if errorlevel 1 (
   exit /b 1
 )
 
-REM 2) Install backend dependencies only if missing
+REM 2) Try to auto-start MySQL via Docker (optional fallback to local MySQL)
+where docker >nul 2>nul
+if errorlevel 1 (
+  echo [WARN] Docker not found. Skipping MySQL container auto-start.
+  echo [INFO] Ensure your local MySQL is running and backend\.env values are correct.
+) else (
+  echo Ensuring MySQL container is running on localhost:3307...
+  docker compose up -d mysql >nul 2>nul
+  if errorlevel 1 (
+    echo [WARN] Could not start Docker MySQL service.
+    echo [INFO] Backend will use local MySQL from backend\.env.
+  ) else (
+    echo [OK] Docker MySQL service is running (or already up).
+  )
+)
+
+REM 3) Install backend dependencies only if missing
 if exist "%PROJECT_ROOT%backend\node_modules" (
   echo [OK] backend\node_modules found - skipping backend install.
 ) else (
@@ -52,10 +68,10 @@ echo.
 echo Starting backend...
 start "BFOS Backend" cmd /k "cd /d ""%PROJECT_ROOT%backend"" && npm run dev"
 
-REM 7) Delay so backend gets time to initialize before frontend
+REM 4) Delay so backend gets time to initialize before frontend
 timeout /t 5 /nobreak >nul
 
-REM 4) Install frontend dependencies only if missing
+REM 5) Install frontend dependencies only if missing
 if exist "%PROJECT_ROOT%frontend\node_modules" (
   echo [OK] frontend\node_modules found - skipping frontend install.
 ) else (
@@ -74,7 +90,7 @@ echo.
 echo Starting frontend...
 start "BFOS Frontend" cmd /k "cd /d ""%PROJECT_ROOT%frontend"" && npm run dev"
 
-REM Delay before opening browser
+REM 6) Delay before opening browser
 timeout /t 6 /nobreak >nul
 
 echo.
@@ -86,4 +102,3 @@ echo All done. Backend and frontend are launching in separate windows.
 echo You can close this launcher window now.
 timeout /t 4 /nobreak >nul
 exit /b 0
-

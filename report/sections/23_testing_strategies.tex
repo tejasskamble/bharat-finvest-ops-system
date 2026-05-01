@@ -1,0 +1,56 @@
+\chapter{Testing Strategies}
+
+The project validation was performed using a layered testing strategy to improve reliability and demo safety.
+
+\section{Unit-level Validation}
+Full formal unit test suites are not yet introduced with Jest/Mocha; however, core logic was validated at function level through controlled API requests and deterministic input scenarios.
+
+\textbf{Examples:}
+\begin{itemize}[leftmargin=1.3cm]
+\item Payload validation for employee/task/attendance controllers.
+\item Duplicate handling paths (attendance duplicate entry, employee duplicate keys).
+\item JWT middleware accept/reject flows.
+\end{itemize}
+
+\section{Integration Testing}
+Integration testing focused on API-to-database behavior.
+\begin{itemize}[leftmargin=1.3cm]
+\item CRUD flows were tested against real MySQL schema.
+\item Foreign key constraints were verified through valid/invalid references.
+\item Dashboard and summary APIs were validated for aggregated SQL output.
+\end{itemize}
+
+\section{System Testing}
+System testing validated end-to-end behavior from browser to database.
+\begin{itemize}[leftmargin=1.3cm]
+\item Login and protected routing.
+\item Employee, task, and attendance operation sequence.
+\item PDF generation in reports page.
+\item Logout and stale session fallback behavior.
+\end{itemize}
+
+\section{UI/UX Testing}
+UI testing was executed with focus on visible controls and modal flows.
+\begin{itemize}[leftmargin=1.3cm]
+\item All actionable buttons were verified for expected behavior.
+\item Required fields and form validation states were checked.
+\item Success/error banners were verified after API responses.
+\item Loading states and disabled buttons were verified during requests.
+\end{itemize}
+
+\section{Build and Runtime Verification}
+\begin{itemize}[leftmargin=1.3cm]
+\item Backend import verification: \texttt{node -e "require('./src/app')"}
+\item Frontend production build verification: \texttt{npm run build}
+\item Health endpoint verification: \texttt{GET /api/health}
+\item CI build verification in GitHub Actions pipeline.
+\end{itemize}
+
+\section{Regression Safety}
+Changes for branding, avatar logic, and DevOps enhancements were validated to ensure no break in existing core modules:
+\begin{itemize}[leftmargin=1.3cm]
+\item Login module remains functional.
+\item Dashboard metrics continue loading.
+\item CRUD operations remain stable.
+\item PDF exports continue generating non-empty documents.
+\end{itemize}

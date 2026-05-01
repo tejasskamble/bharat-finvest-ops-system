@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Modal } from 'bootstrap';
 import axiosInstance from '../api/axiosInstance';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -115,13 +116,23 @@ const Attendance = () => {
 
     setFormData(initialForm);
     setModalError('');
-    const modal = new window.bootstrap.Modal(document.getElementById('attendanceModal'));
+    const modalElement = document.getElementById('attendanceModal');
+    if (!modalElement) {
+      setBanner({ type: 'danger', text: 'Unable to open attendance form. Please refresh and try again.' });
+      return;
+    }
+
+    const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
   };
 
   const closeModal = () => {
     const modalElement = document.getElementById('attendanceModal');
-    const modal = window.bootstrap.Modal.getInstance(modalElement);
+    if (!modalElement) {
+      return;
+    }
+
+    const modal = Modal.getInstance(modalElement);
     if (modal) {
       modal.hide();
     }

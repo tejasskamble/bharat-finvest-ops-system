@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Modal } from 'bootstrap';
 import axiosInstance from '../api/axiosInstance';
 import Navbar from '../components/Navbar';
 import Avatar from '../components/Avatar';
@@ -80,7 +81,13 @@ const Employees = () => {
   }, [debouncedSearch]);
 
   const openEmployeeModal = () => {
-    const modal = new window.bootstrap.Modal(document.getElementById('employeeModal'));
+    const modalElement = document.getElementById('employeeModal');
+    if (!modalElement) {
+      setBanner({ type: 'danger', text: 'Unable to open employee form. Please refresh and try again.' });
+      return;
+    }
+
+    const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
   };
 
@@ -122,7 +129,11 @@ const Employees = () => {
 
   const closeModal = () => {
     const modalElement = document.getElementById('employeeModal');
-    const modal = window.bootstrap.Modal.getInstance(modalElement);
+    if (!modalElement) {
+      return;
+    }
+
+    const modal = Modal.getInstance(modalElement);
     if (modal) {
       modal.hide();
     }

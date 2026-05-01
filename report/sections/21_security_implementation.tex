@@ -1,0 +1,48 @@
+\chapter{Security Implementation}
+
+\section{Authentication Security}
+\begin{itemize}[leftmargin=1.3cm]
+\item User authentication uses JSON Web Token (JWT).
+\item Login credentials are validated against hashed passwords in database.
+\item Access token is required in \texttt{Authorization: Bearer <token>} header for protected APIs.
+\item Backend middleware verifies token signature and expiration.
+\end{itemize}
+
+\section{Password Security with bcrypt}
+\begin{itemize}[leftmargin=1.3cm]
+\item Passwords are not stored in plaintext.
+\item \texttt{bcrypt.compare()} is used during login to verify entered password against stored hash.
+\item Seeded demo accounts include pre-generated bcrypt hashes.
+\end{itemize}
+
+\section{Role-Based Access Control}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{authMiddleware} authenticates request and populates \texttt{req.user}.
+\item \texttt{allowRoles(...)} middleware restricts access by role.
+\item Examples:
+  \begin{itemize}[leftmargin=1.1cm]
+  \item Employee deactivation and task deletion are admin-only.
+  \item Create/update employee/task/attendance are admin/manager-level actions.
+  \end{itemize}
+\end{itemize}
+
+\section{Database and Query Security}
+\begin{itemize}[leftmargin=1.3cm]
+\item Backend uses \texttt{mysql2/promise} with parameterized queries.
+\item Query placeholders prevent SQL injection on dynamic inputs.
+\item Constraints such as unique keys and foreign keys protect data integrity.
+\end{itemize}
+
+\section{Client-Side Session Handling}
+\begin{itemize}[leftmargin=1.3cm]
+\item Token and user data are stored in localStorage for session continuity.
+\item On app load, \texttt{/api/auth/me} refreshes user profile from backend.
+\item Axios interceptor handles 401 responses by clearing local state and redirecting to login.
+\end{itemize}
+
+\section{Operational Security Hygiene}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{.env} is excluded from version control.
+\item \texttt{node\_modules} and SQL backup dumps are ignored in \texttt{.gitignore}.
+\item CORS origin is explicitly set to \texttt{http://localhost:5173} in backend app configuration.
+\end{itemize}

@@ -1,0 +1,54 @@
+\begin{tikzpicture}[
+  font=\small,
+  >=Latex,
+  participant/.style={draw=diagNavy, line width=0.95pt, fill=diagSky, minimum width=2.5cm, minimum height=0.95cm, align=center, text=diagNavy},
+  life/.style={diagSlate!75, dotted, line width=0.9pt},
+  activation/.style={draw=diagNavy, fill=diagNavy!78, minimum width=0.14cm},
+  call/.style={-Latex, line width=0.95pt, diagLine},
+  ret/.style={-Latex, line width=0.95pt, diagTeal!85!black, dashed},
+  msglabel/.style={fill=diagWhite, inner sep=1pt, text=diagSlate}
+]
+
+% Participants
+\node[participant] (actor) at (-5.0,3.9) {User};
+\node[participant] (system) at (0.0,3.9) {System};
+\node[participant] (db) at (5.0,3.9) {Database};
+
+% Lifelines
+\draw[life] (actor.south) -- ++(0,-11.0);
+\draw[life] (system.south) -- ++(0,-11.0);
+\draw[life] (db.south) -- ++(0,-11.0);
+
+% Activation bars
+\node[activation, minimum height=8.2cm] at (-5.0,-2.0) {};
+\node[activation, minimum height=9.2cm] at (0.0,-2.5) {};
+
+% Login flow
+\draw[call] (-5.0,2.1) -- node[msglabel, above] {Login Request} (0.0,2.1);
+\draw[call] (0.0,1.5) -- node[msglabel, above] {Validate Credentials} (5.0,1.5);
+\draw[ret] (5.0,1.0) -- node[msglabel, below] {Login Successful} (0.0,1.0);
+\draw[ret] (0.0,0.4) -- node[msglabel, below] {Dashboard Access Granted} (-5.0,0.4);
+
+% Attendance flow
+\draw[call] (-5.0,-1.0) -- node[msglabel, above] {Mark Attendance} (0.0,-1.0);
+\draw[call] (0.0,-1.6) -- node[msglabel, above] {Save Attendance} (5.0,-1.6);
+\draw[ret] (5.0,-2.1) -- node[msglabel, below] {Attendance Saved} (0.0,-2.1);
+
+% Reporting flow
+\draw[call] (-5.0,-3.0) -- node[msglabel, above] {Generate Report} (0.0,-3.0);
+\draw[call] (0.0,-3.6) -- node[msglabel, above] {Fetch Report Data} (5.0,-3.6);
+\draw[ret] (5.0,-4.1) -- node[msglabel, below] {Report Data Returned} (0.0,-4.1);
+
+% Logout flow
+\draw[call] (-5.0,-5.0) -- node[msglabel, above] {Logout} (0.0,-5.0);
+\draw[ret] (0.0,-5.5) -- node[msglabel, below] {Session Closed} (-5.0,-5.5);
+
+% End marks
+\draw[diagSlate!80, line width=0.9pt] (-5.35,-6.7) -- (-4.65,-6.3);
+\draw[diagSlate!80, line width=0.9pt] (-5.35,-6.3) -- (-4.65,-6.7);
+\draw[diagSlate!80, line width=0.9pt] (-0.35,-6.7) -- (0.35,-6.3);
+\draw[diagSlate!80, line width=0.9pt] (-0.35,-6.3) -- (0.35,-6.7);
+\draw[diagSlate!80, line width=0.9pt] (4.65,-6.7) -- (5.35,-6.3);
+\draw[diagSlate!80, line width=0.9pt] (4.65,-6.3) -- (5.35,-6.7);
+
+\end{tikzpicture}

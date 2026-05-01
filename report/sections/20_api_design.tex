@@ -1,0 +1,116 @@
+\chapter{API Design}
+
+All APIs are exposed by the backend under the \texttt{/api} prefix and return JSON responses.
+
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\small
+
+\section{Authentication APIs}
+\begin{longtable}{L{1.5cm}L{4.8cm}L{2.2cm}L{5.9cm}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Access} & \textbf{Purpose} \\
+\midrule
+\endhead
+POST & \texttt{/api/auth/login} & Public & Validates email and password. On success returns \texttt{token} and \texttt{user}. \\
+GET & \texttt{/api/auth/me} & Authenticated & Returns latest user profile from database for current JWT. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Login Request Example}
+\begin{verbatim}
+{
+  "email": "admin@bharatfinvest.com",
+  "password": "Admin@123"
+}
+\end{verbatim}
+
+\textbf{Login Response Example}
+\begin{verbatim}
+{
+  "token": "<jwt_token>",
+  "user": {
+    "id": 1,
+    "name": "Akshay Shinde",
+    "email": "admin@bharatfinvest.com",
+    "role": "admin",
+    "department": "Administration"
+  }
+}
+\end{verbatim}
+
+\section{Dashboard API}
+\begin{longtable}{L{1.5cm}L{4.8cm}L{2.2cm}L{5.9cm}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Access} & \textbf{Purpose} \\
+\midrule
+\endhead
+GET & \texttt{/api/dashboard/stats} & Authenticated & Returns employee counts, task stats, and today's attendance summary for dashboard widgets and charts. \\
+\bottomrule
+\end{longtable}
+
+\section{Employee APIs}
+\begin{longtable}{L{1.5cm}L{4.8cm}L{2.2cm}L{5.9cm}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Access} & \textbf{Purpose} \\
+\midrule
+\endhead
+GET & \texttt{/api/employees} & Authenticated & Paginated and searchable list of employees (supports page, limit, search). \\
+GET & \texttt{/api/employees/:id} & Authenticated & Employee detail with task count and attendance percentage. \\
+POST & \texttt{/api/employees} & Admin, Manager & Creates employee record. \\
+PUT & \texttt{/api/employees/:id} & Admin, Manager & Updates employee profile data or status. \\
+DELETE & \texttt{/api/employees/:id} & Admin & Soft deactivates employee (status set to inactive). \\
+\bottomrule
+\end{longtable}
+
+\section{Task APIs}
+\begin{longtable}{L{1.5cm}L{4.8cm}L{2.2cm}L{5.9cm}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Access} & \textbf{Purpose} \\
+\midrule
+\endhead
+GET & \texttt{/api/tasks} & Authenticated & Returns task list with optional filters: status, priority, assigned\_to. \\
+GET & \texttt{/api/tasks/stats} & Authenticated & Returns aggregate task status counts. \\
+GET & \texttt{/api/tasks/:id} & Authenticated & Returns one task with assignee and assigner names. \\
+POST & \texttt{/api/tasks} & Admin, Manager & Creates a new task linked to employee and assigner user. \\
+PUT & \texttt{/api/tasks/:id} & Admin, Manager & Updates task fields. \\
+DELETE & \texttt{/api/tasks/:id} & Admin & Permanently deletes task record. \\
+\bottomrule
+\end{longtable}
+
+\section{Attendance APIs}
+\begin{longtable}{L{1.5cm}L{4.8cm}L{2.2cm}L{5.9cm}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Access} & \textbf{Purpose} \\
+\midrule
+\endhead
+GET & \texttt{/api/attendance} & Authenticated & Returns attendance records with filters: employee\_id, from, and to. \\
+POST & \texttt{/api/attendance} & Admin, Manager & Marks attendance for employee/date; duplicate entries are handled with HTTP 409 conflict response. \\
+PUT & \texttt{/api/attendance/:id} & Admin, Manager & Updates an existing attendance row. \\
+GET & \texttt{/api/attendance/summary} & Authenticated & Returns monthly summary per employee with attendance percentage. \\
+\bottomrule
+\end{longtable}
+
+\section{Health API}
+\begin{longtable}{L{1.5cm}L{4.8cm}L{2.2cm}L{5.9cm}}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Access} & \textbf{Purpose} \\
+\midrule
+\endhead
+GET & \texttt{/api/health} & Public & Performs \texttt{SELECT 1}; reports application and database health for monitoring. \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section{API Error Strategy}
+\begin{itemize}[leftmargin=1.3cm]
+\item Validation failures return HTTP 400 with JSON message.
+\item Unauthorized and forbidden access return HTTP 401 and 403 respectively.
+\item Duplicate key or foreign-key conflicts return specific status codes (409 or 422).
+\item Unknown routes return HTTP 404 JSON via fallback middleware.
+\item Unhandled server errors are standardized through global error handler.
+\end{itemize}
+

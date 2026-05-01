@@ -1,0 +1,25 @@
+\begin{tikzpicture}[
+  font=\small,
+  >=Latex,
+  layerbox/.style={draw=black!85, rounded corners=3pt, fill=black!5, minimum width=3.5cm, minimum height=1.7cm, align=center},
+  devops/.style={draw=black!85, rounded corners=3pt, fill=black!10, minimum width=14.4cm, minimum height=2.3cm, align=left},
+  flow/.style={-Latex, line width=1.0pt, black!85},
+  support/.style={-Latex, line width=0.9pt, black!65, dashed}
+]
+
+\node[layerbox] (browser) at (-5.4,1.8) {Browser\\User Interface\\(Chrome / Edge)};
+\node[layerbox] (frontend) at (-1.8,1.8) {React Frontend\\Vite (Dev) / Nginx (Docker)};
+\node[layerbox] (backend) at (1.8,1.8) {Express Backend\\REST API \\texttt{/api/*}};
+\node[layerbox] (database) at (5.4,1.8) {MySQL Database\\users, employees,\\tasks, attendance};
+
+\draw[flow] (browser.east) -- node[above, font=\scriptsize] {HTTPS} (frontend.west);
+\draw[flow] (frontend.east) -- node[above, font=\scriptsize] {Axios + JWT} (backend.west);
+\draw[flow] (backend.east) -- node[above, font=\scriptsize] {SQL Queries} (database.west);
+
+\node[devops] (ops) at (0,-1.6) {\textbf{DevOps Layer:} Docker Compose orchestration, container health checks, GitHub Actions CI, and database backup/restore scripts.};
+
+\draw[support] (ops.north) -- ++(0,0.55) -| (frontend.south);
+\draw[support] (ops.north) -- ++(0,0.55) -| (backend.south);
+\draw[support] (ops.north) -- ++(0,0.55) -| (database.south);
+
+\end{tikzpicture}

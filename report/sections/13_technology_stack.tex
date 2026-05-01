@@ -1,0 +1,23 @@
+﻿\chapter{Technology Stack}
+
+\begin{longtable}{p{3.2cm}p{3.2cm}p{8.0cm}}
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Usage in Project} \\
+\midrule
+\endhead
+Frontend & React.js & Component-based UI for login, dashboard, employees, tasks, attendance, and reports pages. \\
+Frontend Tooling & Vite & Fast development server and production build pipeline. \\
+UI Framework & Bootstrap 5 & Responsive layout, tables, modals, forms, alerts, buttons. \\
+HTTP Client & Axios & API requests through centralized axios instance with auth header interceptor. \\
+Charts & Chart.js + react-chartjs-2 & Dashboard visualization for task status and attendance. \\
+Reporting & jsPDF + jspdf-autotable & Client-side PDF exports for employee/task/attendance reports. \\
+Backend Runtime & Node.js & JavaScript runtime for API server. \\
+Backend Framework & Express.js & Route handling, middleware, JSON APIs, error responses. \\
+Database Driver & mysql2/promise & Parameterized SQL query execution. \\
+Database & MySQL 8.0 & Persistent storage for users, employees, tasks, attendance. \\
+Authentication & JWT & Stateless token authentication with Bearer headers. \\
+Password Security & bcrypt & Secure password hash verification during login. \\
+DevOps & Docker, Docker Compose & Multi-service orchestration: mysql, backend, frontend. \\
+CI/CD & GitHub Actions & Automated dependency install, backend import check, frontend build. \\
+\bottomrule
+\end{longtable}

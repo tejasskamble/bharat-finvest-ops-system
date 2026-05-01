@@ -32,6 +32,12 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err?.code === 'ECONNREFUSED') {
+    return res.status(503).json({
+      message: 'Database connection failed. Check DB_HOST/DB_PORT and ensure MySQL is running.'
+    });
+  }
+
   const status = err.status || 500;
   const message = err.message || 'Internal server error';
   res.status(status).json({ message });

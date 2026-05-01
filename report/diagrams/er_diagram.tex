@@ -1,0 +1,74 @@
+\begin{tikzpicture}[
+  font=\footnotesize,
+  entity/.style={draw=diagNavy, line width=1.05pt, rounded corners=2pt, minimum width=3.0cm, minimum height=1.0cm, fill=diagSky, align=center, text=diagSlate},
+  attr/.style={ellipse, draw=diagSlate!85, line width=0.9pt, minimum width=2.2cm, minimum height=0.9cm, fill=diagWhite, align=center, text=diagSlate},
+  keyattr/.style={attr, draw=diagGold!90!black, fill=diagSand, line width=1.0pt, font=\footnotesize\bfseries},
+  relation/.style={diamond, draw=diagTeal!85!black, line width=1.0pt, minimum width=1.8cm, minimum height=1.3cm, fill=diagMint, align=center, text=diagSlate},
+  link/.style={line width=0.95pt, diagLine},
+  card/.style={font=\scriptsize\bfseries, text=diagNavy}
+]
+
+% Entities
+\node[entity] (users) at (-7.0,1.4) {User Account};
+\node[entity] (employees) at (-1.5,1.4) {Employee};
+\node[entity] (tasks) at (5.7,1.4) {Task};
+\node[entity] (attendance) at (-1.5,-3.1) {Attendance};
+
+% Relationships
+\node[relation] (mapsTo) at (-4.2,1.4) {Maps to};
+\node[relation] (worksOn) at (2.5,1.4) {Works\\on};
+\node[relation] (has) at (-1.5,-0.8) {Has};
+
+% Relationship links + cardinalities
+\draw[link] ([yshift=10pt]users.east) -- ([yshift=10pt]mapsTo.west) node[midway, above, card] {1};
+\draw[link] ([yshift=10pt]mapsTo.east) -- ([yshift=10pt]employees.west) node[midway, above, card] {0..1};
+\draw[link] ([yshift=10pt]employees.east) -- ([yshift=10pt]worksOn.west) node[midway, above, card] {1};
+\draw[link] ([yshift=10pt]worksOn.east) -- ([yshift=10pt]tasks.west) node[midway, above, card] {M};
+\draw[link] (employees.south) -- (has.north) node[midway, right, card] {1};
+\draw[link] (has.south) -- (attendance.north) node[midway, right, card] {M};
+
+% User attributes
+\node[keyattr] (userId) at (-8.8,2.8) {user\_id};
+\node[attr] (uEmail) at (-8.8,1.6) {email};
+\node[attr] (uPass) at (-8.4,0.4) {password\_hash};
+\node[attr] (uRole) at (-7.0,-0.4) {role};
+\draw[link] (userId) -- (users.north west);
+\draw[link] (uEmail) -- (users.west);
+\draw[link] (uPass) -- (users.south west);
+\draw[link] (uRole) -- (users.south);
+
+% Employee attributes
+\node[keyattr] (empId) at (-3.3,2.8) {employee\_id};
+\node[attr] (empCode) at (-1.5,3.3) {employee\_code};
+\node[attr] (empName) at (0.2,2.8) {name};
+\node[attr] (empDept) at (0.5,1.0) {department};
+\node[attr] (empDesig) at (0.1,0.2) {designation};
+\draw[link] (empId) -- (employees.north west);
+\draw[link] (empCode) -- (employees.north);
+\draw[link] (empName) -- (employees.north east);
+\draw[link] (empDept) -- (employees.east);
+\draw[link] (empDesig) -- (employees.south east);
+
+% Task attributes
+\node[keyattr] (taskId) at (6.8,2.8) {task\_id};
+\node[attr] (tTitle) at (8.3,2.3) {title};
+\node[attr] (tPriority) at (8.4,1.4) {priority};
+\node[attr] (tDue) at (7.1,0.4) {due\_date};
+\node[attr] (tStatus) at (5.3,0.4) {status};
+\draw[link] (taskId) -- (tasks.north);
+\draw[link] (tTitle) -- (tasks.north east);
+\draw[link] (tPriority) -- (tasks.east);
+\draw[link] (tDue) -- (tasks.south east);
+\draw[link] (tStatus) -- (tasks.south);
+
+% Attendance attributes
+\node[keyattr] (attId) at (-3.4,-4.2) {attendance\_id};
+\node[attr] (aDate) at (-1.6,-4.6) {date};
+\node[attr] (aIn) at (0.2,-4.0) {check\_in};
+\node[attr] (aOut) at (0.6,-2.9) {check\_out};
+\draw[link] (attId) -- (attendance.south west);
+\draw[link] (aDate) -- (attendance.south);
+\draw[link] (aIn) -- (attendance.south east);
+\draw[link] (aOut) -- (attendance.east);
+
+\end{tikzpicture}

@@ -1,0 +1,100 @@
+\chapter{Appendix}
+
+\section{A. Training and Client Context}
+\begin{itemize}[leftmargin=1.3cm]
+\item Training Organization: \textbf{Nityashree Infosystems Pvt. Ltd.}
+\item Client / Project Domain Organization: \textbf{Bharat Finvest}
+\item Project Title: \textbf{Bharat Finvest Internal Operations Management System}
+\end{itemize}
+
+\section{B. GitHub Repository}
+\url{https://github.com/tejasskamble/bharat-finvest-ops-system}
+
+\section{C. Demo Credentials}
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{2.5cm}p{6.0cm}p{2.5cm}}
+\toprule
+\textbf{Role} & \textbf{Email} & \textbf{Password} \\
+\midrule
+Admin & \texttt{admin@bharatfinvest.com} & \texttt{Admin@123} \\
+Manager & \texttt{manager@bharatfinvest.com} & \texttt{Manager@123} \\
+Employee & \texttt{employee@bharatfinvest.com} & \texttt{Emp@123} \\
+\bottomrule
+\end{tabular}
+\end{table}
+\normalsize
+
+\section{D. Employee and Intern Seed Dataset}
+\begin{itemize}[leftmargin=1.3cm]
+\item Ritesh Bhate
+\item Niranjan Yadav
+\item Pravin Shinde
+\item Shripad Devkar
+\item Priyanka Shinde
+\item Avanti Waghmare
+\item Shweta Kulkarni
+\item Mansi Sonawane
+\item Kshitij Dhaware
+\item Yash Meshram
+\item Aarya Kale
+\item Disha Jadhav
+\end{itemize}
+
+\section{E. Essential Commands}
+\subsection*{1. Database Import (Windows CMD)}
+\begin{verbatim}
+mysql -u root -p < database\schema.sql
+mysql -u root -p bharat_finvest_ops < database\seed.sql
+\end{verbatim}
+\textit{Note: If mysql is not in PATH, use the full executable path of mysql.exe.}
+
+\subsection*{2. Backend Run}
+\begin{verbatim}
+cd backend
+npm install
+npm run dev
+\end{verbatim}
+
+\subsection*{3. Frontend Run}
+\begin{verbatim}
+cd frontend
+npm install
+npm run dev
+\end{verbatim}
+
+\subsection*{4. One-Click Run}
+\begin{verbatim}
+start-project.bat
+\end{verbatim}
+
+\subsection*{5. Health Check}
+\begin{verbatim}
+http://localhost:5000/api/health
+\end{verbatim}
+
+\subsection*{6. Docker Commands}
+\begin{verbatim}
+docker-compose up --build
+docker-compose down
+\end{verbatim}
+
+\subsection*{7. Backup and Restore}
+\begin{verbatim}
+scripts\backup-db.bat
+scripts\restore-db.bat
+\end{verbatim}
+
+\section{F. Final QA Checklist Reference}
+\begin{itemize}[leftmargin=1.3cm]
+\item Login tested
+\item Dashboard tested
+\item Employee CRUD tested
+\item Task CRUD tested
+\item Attendance tested
+\item Reports PDF tested
+\item Logout tested
+\item Health API tested
+\end{itemize}

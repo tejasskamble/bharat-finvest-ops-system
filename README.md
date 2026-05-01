@@ -26,9 +26,10 @@ operations such as employee management, task tracking, attendance, and reporting
 
 ## Run Locally
 
-1. `cd backend && npm install && npm run dev`
-2. `cd frontend && npm install && npm run dev`
-3. Open `http://localhost:5173`
+1. Start database: `docker compose up -d mysql` (recommended) or run local MySQL and update `backend/.env`.
+2. `cd backend && npm install && npm run dev`
+3. `cd frontend && npm install && npm run dev`
+4. Open `http://localhost:5173`
 
 ## Demo Credentials
 

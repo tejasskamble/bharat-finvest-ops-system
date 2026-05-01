@@ -1,0 +1,69 @@
+\chapter{DevOps Implementation}
+
+\section{Dockerization Strategy}
+The project is container-ready with separate services for MySQL, backend API, and frontend web server.
+
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{backend/Dockerfile}: builds Node.js backend image and runs \texttt{server.js} on port 5000.
+\item \texttt{frontend/Dockerfile}: builds React app and serves static output with Nginx.
+\item \texttt{frontend/nginx.conf}: handles SPA fallback routing and proxies \texttt{/api} requests to backend service.
+\end{itemize}
+
+\section{Docker Compose Orchestration}
+\texttt{docker-compose.yml} defines three services:
+\begin{itemize}[leftmargin=1.3cm]
+\item \textbf{mysql}: MySQL 8 container with initialization from \texttt{database/} scripts.
+\item \textbf{backend}: Depends on healthy MySQL and exposes port 5000.
+\item \textbf{frontend}: Depends on healthy backend and exposes port 80.
+\end{itemize}
+
+\section{Health Checks}
+\begin{itemize}[leftmargin=1.3cm]
+\item MySQL health check uses \texttt{mysqladmin ping}.
+\item Backend health check calls \texttt{GET /api/health} from inside container.
+\item Health endpoint runs \texttt{SELECT 1} query to confirm database connectivity.
+\item If database check fails, endpoint returns HTTP 503 with \texttt{database: disconnected}.
+\end{itemize}
+
+\section{GitHub Actions CI Pipeline}
+\texttt{.github/workflows/ci.yml} automatically runs on push and pull request.
+
+\begin{itemize}[leftmargin=1.3cm]
+\item Sets up Node.js 20.
+\item Installs backend dependencies using \texttt{npm install}.
+\item Verifies backend app import with \texttt{node -e "require('./backend/src/app')"}-style check.
+\item Installs frontend dependencies and executes \texttt{npm run build}.
+\end{itemize}
+
+This pipeline quickly catches import errors and frontend build failures before deployment.
+
+\section{Windows Automation Scripts}
+\subsection*{1. One-click startup script}
+\texttt{start-project.bat}:
+\begin{itemize}[leftmargin=1.3cm]
+\item Detects Node/npm availability.
+\item Installs backend/frontend dependencies only if \texttt{node\_modules} is missing.
+\item Starts backend and frontend in separate CMD windows.
+\item Opens browser at \texttt{http://localhost:5173}.
+\end{itemize}
+
+\subsection*{2. Backup script}
+\texttt{scripts/backup-db.bat}:
+\begin{itemize}[leftmargin=1.3cm]
+\item Uses full-path \texttt{mysqldump.exe}.
+\item Creates \texttt{backups/} if missing.
+\item Produces timestamped SQL dump file for \texttt{bharat\_finvest\_ops}.
+\end{itemize}
+
+\subsection*{3. Restore script}
+\texttt{scripts/restore-db.bat}:
+\begin{itemize}[leftmargin=1.3cm]
+\item Accepts drag/drop backup file path from user.
+\item Uses full-path \texttt{mysql.exe} to restore selected dump into target database.
+\end{itemize}
+
+\section{Environment-based Configuration}
+Backend configuration uses environment variables from \texttt{backend/.env}:
+\texttt{DB\_HOST}, \texttt{DB\_PORT}, \texttt{DB\_USER}, \texttt{DB\_PASSWORD}, \texttt{DB\_NAME}, \texttt{JWT\_SECRET}, \texttt{JWT\_EXPIRES\_IN}, and \texttt{PORT}.
+
+This design supports local execution, Docker execution, and future production deployment with minimal changes.

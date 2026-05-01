@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Modal } from 'bootstrap';
 import axiosInstance from '../api/axiosInstance';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -88,7 +89,13 @@ const Tasks = () => {
   }, [statusFilter, priorityFilter]);
 
   const openTaskModal = () => {
-    const modal = new window.bootstrap.Modal(document.getElementById('taskModal'));
+    const modalElement = document.getElementById('taskModal');
+    if (!modalElement) {
+      setBanner({ type: 'danger', text: 'Unable to open task form. Please refresh and try again.' });
+      return;
+    }
+
+    const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
   };
 
@@ -127,7 +134,11 @@ const Tasks = () => {
 
   const closeModal = () => {
     const modalElement = document.getElementById('taskModal');
-    const modal = window.bootstrap.Modal.getInstance(modalElement);
+    if (!modalElement) {
+      return;
+    }
+
+    const modal = Modal.getInstance(modalElement);
     if (modal) {
       modal.hide();
     }

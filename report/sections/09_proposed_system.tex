@@ -1,0 +1,20 @@
+﻿\chapter{Proposed System}
+
+The proposed solution is a centralized internal operations management portal with secure login and role-aware access.
+
+\textbf{Core goals of the proposed system:}
+\begin{itemize}[leftmargin=1.3cm]
+\item Single application for employee, task, attendance, and reporting workflows.
+\item JWT-based login with backend authorization checks.
+\item Dashboard with live operational metrics.
+\item CRUD-based data management with validations and error handling.
+\item PDF report export for submission and review use cases.
+\item DevOps readiness through Docker, CI, health checks, and backup utilities.
+\end{itemize}
+
+\textbf{User roles in system:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \textbf{Admin}: Full access including employee deactivation and task deletion.
+\item \textbf{Manager}: Operational management access (employee/task/attendance updates except admin-only actions).
+\item \textbf{Employee}: Read-focused access to operational pages as configured by role restrictions.
+\end{itemize}

@@ -1,0 +1,39 @@
+\begin{tikzpicture}[
+  font=\small,
+  usecase/.style={draw=diagTeal!85!black, line width=0.95pt, ellipse, minimum width=2.9cm, minimum height=1.0cm, fill=diagMint, align=center, text=diagSlate},
+  assoc/.style={line width=0.95pt, diagLine}
+]
+
+% System boundary
+\node[draw=diagNavy, line width=1.05pt, rounded corners=2pt, minimum width=9.6cm, minimum height=9.6cm, fill=diagSky!40] (system) at (2.8,-0.4) {};
+\node[anchor=north west, font=\small\bfseries, text=diagNavy] at (-1.7,4.1) {BHARAT FINVEST OPERATIONS SYSTEM};
+
+% Actor (stick figure)
+\coordinate (head) at (-5.9,-0.1);
+\draw[diagSlate!90] (head) circle (0.28cm);
+\draw[diagSlate!90, line width=0.85pt] (-5.9,-0.4) -- (-5.9,-1.4);
+\draw[diagSlate!90, line width=0.85pt] (-6.5,-0.8) -- (-5.3,-0.8);
+\draw[diagSlate!90, line width=0.85pt] (-5.9,-1.4) -- (-6.5,-2.0);
+\draw[diagSlate!90, line width=0.85pt] (-5.9,-1.4) -- (-5.3,-2.0);
+\node[align=center, text=diagSlate] at (-5.9,-2.8) {Admin / Manager / Employee};
+
+% Use cases (vertical as per sample structure)
+\node[usecase] (login) at (2.5,2.9) {Login};
+\node[usecase] (dashboard) at (2.5,1.7) {Dashboard Access};
+\node[usecase] (emp) at (2.5,0.5) {Manage Employees};
+\node[usecase] (tasks) at (2.5,-0.7) {Manage Tasks};
+\node[usecase] (attendance) at (2.5,-1.9) {Mark Attendance};
+\node[usecase] (reports) at (2.5,-3.1) {Generate Reports};
+\node[usecase] (logout) at (2.5,-4.3) {Logout};
+
+% Fan-out connection hub
+\coordinate (hub) at (-4.2,-1.0);
+\draw[assoc] (hub) -- (login.west);
+\draw[assoc] (hub) -- (dashboard.west);
+\draw[assoc] (hub) -- (emp.west);
+\draw[assoc] (hub) -- (tasks.west);
+\draw[assoc] (hub) -- (attendance.west);
+\draw[assoc] (hub) -- (reports.west);
+\draw[assoc] (hub) -- (logout.west);
+
+\end{tikzpicture}

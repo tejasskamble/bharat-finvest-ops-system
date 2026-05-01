@@ -1,0 +1,61 @@
+\begin{tikzpicture}[
+  font=\small,
+  >=Latex,
+  classbox/.style={
+    draw=diagNavy,
+    line width=1.0pt,
+    rectangle split,
+    rectangle split parts=3,
+    rectangle split part align={left,left,left},
+    rectangle split part fill={diagNavy!13,diagWhite,diagSand!72},
+    text width=4.7cm,
+    align=left,
+    text=diagSlate
+  },
+  relation/.style={-Latex, line width=1.0pt, diagLine},
+  card/.style={font=\scriptsize\bfseries, text=diagNavy}
+]
+
+\node[classbox] (user) at (-5.8,1.8)
+{\textcolor{diagNavy}{\textbf{User}}
+\nodepart{two}
++ userId\\
++ name\\
++ email\\
+- passwordHash\\
++ role
+\nodepart{three}
++ login()\\
++ logout()};
+
+\node[classbox] (employee) at (2.9,1.9)
+{\textcolor{diagNavy}{\textbf{Employee}}
+\nodepart{two}
++ employeeId\\
++ employeeCode\\
++ department\\
++ designation\\
++ status
+\nodepart{three}
++ createEmployee()\\
++ updateEmployee()\\
++ deactivateEmployee()};
+
+\node[classbox] (attendance) at (2.9,-5.1)
+{\textcolor{diagNavy}{\textbf{Attendance}}
+\nodepart{two}
++ attendanceId\\
++ date\\
++ checkIn\\
++ checkOut\\
++ attendanceStatus
+\nodepart{three}
++ markAttendance()\\
++ updateAttendance()\\
++ getMonthlySummary()};
+
+% Relations
+\draw[relation] (user.east) -- node[above, card] {1} node[below, card] {0..1} (employee.west);
+\draw[relation] (employee.south) -- node[right, card] {1} node[left, card] {M} (attendance.north);
+
+\end{tikzpicture}

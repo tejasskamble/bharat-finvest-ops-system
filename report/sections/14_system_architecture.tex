@@ -1,0 +1,25 @@
+\chapter{System Architecture}
+
+The implemented system follows a three-tier architecture with an additional DevOps support layer.
+
+\begin{itemize}[leftmargin=1.3cm]
+\item \textbf{Presentation Layer}: React + Vite frontend, served in development at port 5173 and through Nginx in Docker.
+\item \textbf{Application Layer}: Express backend at port 5000, exposing REST APIs under \texttt{/api/*}.
+\item \textbf{Data Layer}: MySQL database with normalized relational schema.
+\item \textbf{DevOps Layer}: Docker Compose orchestration, health checks, GitHub Actions CI, backup/restore scripts.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{\input{diagrams/architecture_diagram}}
+\caption{System Architecture Diagram}
+\end{figure}
+
+\textbf{Request Flow Summary}
+\begin{enumerate}[leftmargin=1.3cm]
+\item User action in frontend triggers an Axios request.
+\item Axios interceptor attaches JWT token (if present).
+\item Backend middleware verifies token and role.
+\item Controller executes parameterized SQL on MySQL.
+\item JSON response updates UI state and renders feedback.
+\end{enumerate}

@@ -1,0 +1,149 @@
+\chapter{Module Description}
+
+\section{Login Module}
+\textbf{What it does:} Authenticates user credentials and initializes secure session state.
+
+\textbf{Frontend files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{frontend/src/pages/Login.jsx}
+\item \texttt{frontend/src/context/AuthContext.jsx}
+\item \texttt{frontend/src/api/axiosInstance.js}
+\end{itemize}
+
+\textbf{Backend APIs involved:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{POST /api/auth/login}
+\item \texttt{GET /api/auth/me}
+\end{itemize}
+
+\textbf{Database tables:} \texttt{users}
+
+\textbf{Role usage:} Admin, Manager, and Employee.
+
+\section{Admin Dashboard Module}
+\textbf{What it does:} Displays operational KPIs and charts such as employee count, task status distribution, and today's attendance summary.
+
+\textbf{Frontend files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{frontend/src/pages/Dashboard.jsx}
+\item \texttt{frontend/src/components/StatCard.jsx}
+\end{itemize}
+
+\textbf{Backend API involved:} \texttt{GET /api/dashboard/stats}
+
+\textbf{Database tables:} \texttt{employees}, \texttt{tasks}, \texttt{attendance}
+
+\section{Employee Management Module}
+\textbf{What it does:} Provides employee search, pagination, add, edit, and activate/deactivate operations.
+
+\textbf{Frontend files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{frontend/src/pages/Employees.jsx}
+\item \texttt{frontend/src/components/Avatar.jsx}
+\end{itemize}
+
+\textbf{Backend APIs involved:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{GET /api/employees}
+\item \texttt{GET /api/employees/:id}
+\item \texttt{POST /api/employees}
+\item \texttt{PUT /api/employees/:id}
+\item \texttt{DELETE /api/employees/:id}
+\end{itemize}
+
+\textbf{Database tables:} \texttt{employees}, optionally linked to \texttt{users} through \texttt{user\_id}
+
+\textbf{Role behavior:}
+\begin{itemize}[leftmargin=1.3cm]
+\item Admin and Manager can add/edit employees.
+\item Only Admin can deactivate/reactivate employees.
+\end{itemize}
+
+\section{Task Management Module}
+\textbf{What it does:} Supports task creation, update, filtering by status/priority, and deletion.
+
+\textbf{Frontend files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{frontend/src/pages/Tasks.jsx}
+\end{itemize}
+
+\textbf{Backend APIs involved:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{GET /api/tasks}
+\item \texttt{GET /api/tasks/stats}
+\item \texttt{GET /api/tasks/:id}
+\item \texttt{POST /api/tasks}
+\item \texttt{PUT /api/tasks/:id}
+\item \texttt{DELETE /api/tasks/:id}
+\end{itemize}
+
+\textbf{Database tables:} \texttt{tasks}, \texttt{employees}, \texttt{users}
+
+\section{Attendance Management Module}
+\textbf{What it does:} Tracks daily attendance with filtering and monthly summary.
+
+\textbf{Frontend files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{frontend/src/pages/Attendance.jsx}
+\end{itemize}
+
+\textbf{Backend APIs involved:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{GET /api/attendance}
+\item \texttt{POST /api/attendance}
+\item \texttt{PUT /api/attendance/:id}
+\item \texttt{GET /api/attendance/summary}
+\end{itemize}
+
+\textbf{Database tables:} \texttt{attendance}, \texttt{employees}
+
+\section{Reports Module}
+\textbf{What it does:} Generates PDF reports for employees, tasks, and attendance summary using client-side export.
+
+\textbf{Frontend files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{frontend/src/pages/Reports.jsx}
+\end{itemize}
+
+\textbf{Backend APIs involved:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{GET /api/employees}
+\item \texttt{GET /api/tasks}
+\item \texttt{GET /api/attendance/summary}
+\end{itemize}
+
+\textbf{Libraries:} \texttt{jspdf}, \texttt{jspdf-autotable}
+
+\section{Profile, Branding, and Avatar Module}
+\textbf{What it does:} Provides consistent visual identity and dynamic initials-based avatars.
+
+\textbf{Frontend files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{frontend/src/components/Avatar.jsx}
+\item \texttt{frontend/src/components/BrandLogo.jsx}
+\item \texttt{frontend/src/components/Sidebar.jsx}
+\end{itemize}
+
+\textbf{Highlights:}
+\begin{itemize}[leftmargin=1.3cm]
+\item Removes dependency on static default avatar image for all users.
+\item Generates initials from real names (for example, RB, NY, PS, KD).
+\item Uses text-based safe branding when official logo asset is unavailable.
+\end{itemize}
+
+\section{DevOps Module}
+\textbf{What it does:} Standardizes run, verification, health monitoring, CI, and data safety operations.
+
+\textbf{Files:}
+\begin{itemize}[leftmargin=1.3cm]
+\item \texttt{docker-compose.yml}
+\item \texttt{backend/Dockerfile}
+\item \texttt{frontend/Dockerfile}
+\item \texttt{frontend/nginx.conf}
+\item \texttt{.github/workflows/ci.yml}
+\item \texttt{scripts/backup-db.bat}
+\item \texttt{scripts/restore-db.bat}
+\item \texttt{start-project.bat}
+\end{itemize}
+
+\textbf{API:} \texttt{GET /api/health}

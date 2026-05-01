@@ -1,0 +1,136 @@
+\documentclass[12pt,a4paper]{report}
+\pdfminorversion=7
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{mathptmx}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pdfpages}
+\usepackage{titlesec}
+
+\definecolor{diagNavy}{HTML}{1F3A5F}
+\definecolor{diagTeal}{HTML}{2A9D8F}
+\definecolor{diagSky}{HTML}{EAF2FB}
+\definecolor{diagMint}{HTML}{E8F6F3}
+\definecolor{diagSand}{HTML}{FFF5E8}
+\definecolor{diagGold}{HTML}{C79A3B}
+\definecolor{diagSlate}{HTML}{4A5568}
+\definecolor{diagLine}{HTML}{3F4F63}
+\definecolor{diagWhite}{HTML}{FFFFFF}
+
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,shapes.multipart,fit,calc}
+
+\titleformat{\chapter}[display]
+  {\centering\bfseries\Large}
+  {}
+  {0pt}
+  {\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{0pt}{16pt}
+
+\newif\ifshowacademicborder
+\showacademicborderfalse
+\newcommand{\EnableAcademicBorder}{\global\showacademicbordertrue}
+
+\AddToHook{shipout/background}{%
+  \ifshowacademicborder
+    \begin{tikzpicture}[remember picture,overlay]
+      \draw[line width=1.0pt]
+        ($(current page.north west)+(12mm,-12mm)$)
+        rectangle
+        ($(current page.south east)+(-12mm,12mm)$);
+      \draw[line width=0.55pt]
+        ($(current page.north west)+(14mm,-14mm)$)
+        rectangle
+        ($(current page.south east)+(-14mm,14mm)$);
+    \end{tikzpicture}
+  \fi
+}
+
+\setstretch{1.2}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlength{\emergencystretch}{3em}
+\sloppy
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=black,
+  citecolor=black,
+  pdftitle={Bharat Finvest Internal Operations Management System},
+  pdfauthor={Tejas Sudhakar Kamble}
+}
+
+\makeatletter
+\def\ps@plain{%
+  \let\@mkboth\@gobbletwo
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \def\@oddfoot{\hfill\thepage}
+  \def\@evenfoot{\hfill\thepage}
+}
+\makeatother
+
+\pagestyle{plain}
+
+\begin{document}
+
+\pagenumbering{gobble}
+\input{sections/01_cover_page}
+\clearpage
+\input{sections/02_completion_certificate}
+\clearpage
+\input{sections/03_college_certificate}
+\clearpage
+\EnableAcademicBorder
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+\input{sections/04_declaration}
+\clearpage
+\input{sections/05_acknowledgement}
+\clearpage
+\input{sections/06_abstract}
+\clearpage
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\input{sections/07_introduction_to_problem}
+\input{sections/08_existing_system}
+\input{sections/09_proposed_system}
+\input{sections/10_scope_of_work}
+\input{sections/11_feasibility_study}
+\input{sections/12_system_requirements}
+\input{sections/13_technology_stack}
+\input{sections/14_system_architecture}
+\input{sections/15_database_design}
+\input{sections/16_er_diagram}
+\input{sections/17_uml_diagrams}
+\input{sections/18_module_description}
+\input{sections/19_user_interface_screens}
+\input{sections/20_api_design}
+\input{sections/21_security_implementation}
+\input{sections/22_devops_implementation}
+\input{sections/23_testing_strategies}
+\input{sections/24_test_cases}
+\input{sections/25_limitations}
+\input{sections/26_future_scope}
+\input{sections/27_conclusion}
+\input{sections/28_bibliography}
+\input{sections/29_appendix}
+
+\end{document}
+
+
+

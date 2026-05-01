@@ -1,0 +1,44 @@
+\chapter{Test Cases}
+
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.16}
+\newcolumntype{T}[1]{>{\raggedright\arraybackslash}p{#1}}
+\footnotesize
+
+\begin{longtable}{T{0.9cm}T{2.4cm}T{3.0cm}T{5.0cm}T{1.7cm}}
+\toprule
+\textbf{ID} & \textbf{Test Case} & \textbf{Input / Action} & \textbf{Expected Result} & \textbf{Status} \\
+\midrule
+\endhead
+TC01 & Login success & Valid admin credentials & Redirect to dashboard with active session and sidebar user details. & Pass \\
+TC02 & Login failure & Invalid password & Error alert shown for invalid credentials. & Pass \\
+TC03 & Auth refresh & Existing JWT, app reload & \texttt{/api/auth/me} refreshes user and updates localStorage state. & Pass \\
+TC04 & Employee list load & Open Employees page & Paginated data displayed with search and avatar initials. & Pass \\
+TC05 & Add employee & Submit valid Add Employee form & New employee created, success banner shown, table refreshed. & Pass \\
+TC06 & Edit employee & Update existing employee details & Employee updated, modal closes after success, table refreshed. & Pass \\
+TC07 & Deactivate employee & Admin clicks Deactivate and confirms & Employee status changes to inactive with success banner. & Pass \\
+TC08 & Task list filter & Apply status and priority filters & Task table shows matching filtered records only. & Pass \\
+TC09 & Add task & Submit valid task form with assignee & Task created and visible in refreshed list. & Pass \\
+TC10 & Edit task & Update task status or due date & Task updated while preserving relational links. & Pass \\
+TC11 & Delete task & Admin confirms task deletion & Task removed from database and UI list. & Pass \\
+TC12 & Mark attendance & Submit employee/date/status in modal & Attendance entry inserted and table refreshed. & Pass \\
+TC13 & Duplicate attendance guard & Mark same employee/date twice & API returns conflict; UI displays error in modal. & Pass \\
+TC14 & Attendance filters & Filter by employee and date range & Table updates with matching records. & Pass \\
+TC15 & Employee PDF export & Click Export PDF in Reports page & Downloaded PDF contains employee rows and header. & Pass \\
+TC16 & Task PDF export & Click Export PDF in Reports page & Downloaded PDF contains task data with timestamp. & Pass \\
+TC17 & Attendance PDF export & Click Export PDF in Reports page & Downloaded PDF contains attendance summary table. & Pass \\
+TC18 & Logout flow & Click sidebar logout button & Token and user are removed; route redirects to login. & Pass \\
+TC19 & Health API success & GET \texttt{/api/health} with DB available & JSON response shows status OK and database connected. & Pass \\
+TC20 & Unauthorized route & Call protected API without token & HTTP 401 JSON error response returned. & Pass \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section*{Notes on Evidence Collection}
+\begin{itemize}[leftmargin=1.3cm]
+\item API responses were verified through browser-driven requests and backend logs.
+\item Frontend behavior was verified with modal actions, alerts, and table refresh checks.
+\item Build and import checks were also validated through command-line verification and CI workflow.
+\end{itemize}

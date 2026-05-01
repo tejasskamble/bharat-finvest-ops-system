@@ -1,0 +1,13 @@
+\chapter{Limitations}
+
+Although the application is stable for academic demonstration and prototype usage, the following limitations are currently present:
+
+\begin{itemize}[leftmargin=1.3cm]
+\item Role policy is practical for demo but can be expanded with finer permission granularity (module-level/field-level controls).
+\item Automated unit and integration test suites are not fully formalized with a dedicated testing framework.
+\item Audit trail for all data changes (who changed what and when) is not yet implemented as a separate module.
+\item Notification workflows (email/SMS reminders for overdue tasks or missing attendance) are not integrated.
+\item Large-scale pagination and server-side report batching are basic; advanced performance tuning can be introduced for high-volume production traffic.
+\item Deployment is currently local/container-ready; cloud production deployment pipeline is not yet configured.
+\item Mobile-first UX optimization can be enhanced for long operational tables on very small screens.
+\end{itemize}
